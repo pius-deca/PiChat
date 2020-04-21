@@ -34,6 +34,10 @@ public class User extends GeneralBaseEntity{
   @Column(nullable = false)
   private String username;
 
+  @NotBlank(message = "Please provide a password")
+  @Column(nullable = false)
+  private String password;
+
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
   private List<Post> posts;
 }

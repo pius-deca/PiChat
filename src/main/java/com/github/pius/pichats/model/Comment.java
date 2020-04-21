@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -21,7 +20,7 @@ public class Comment extends GeneralBaseEntity{
   @Column(nullable = false)
   private String comment;
 
-  private String identifier;
+  private String user_identifier;
 
   @ManyToOne
   @JoinColumn(name = "post_id")

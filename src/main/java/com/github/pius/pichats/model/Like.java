@@ -19,7 +19,7 @@ public class Like extends GeneralBaseEntity{
   @Column(columnDefinition = "boolean default false", nullable = false)
   private boolean likes;
 
-  private String identifier;
+  private String user_identifier;
 
   @ManyToOne
   @JoinColumn(name = "post_id")
