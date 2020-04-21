@@ -1,0 +1,23 @@
+server:
+  port: ${PORT:8088}
+  servlet:
+    context-path: /api/v1
+spring:
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        ddl-auto: create
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://${DB_HOST:localhost}:5432/pichat}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:1996}
+    initialization-mode: always
+    driverClassName: org.postgresql.Driver
+    continue-on-error: true
+com:
+  cloudinary:
+    cloud_name: ${cloud_name:piusaremieye}
+    api_key: ${api_key:475476531299184}
+    api_secret: ${api_secret:Y1gJDPyzNDrn1AwMtj8-b15ewlY}
+
