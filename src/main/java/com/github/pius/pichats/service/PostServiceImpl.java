@@ -150,6 +150,19 @@ public class PostServiceImpl implements PostService {
   }
 
   @Override
+  public Post findPostById(Long postId) {
+    try{
+      Optional<Post> postFound = postRepository.findById(postId);
+      if (postFound.isPresent()){
+        return postFound.get();
+      }
+      throw new CustomException("Post of id : "+postId+ " does not exists", HttpStatus.NOT_FOUND);
+    }catch (Exception ex){
+      throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+  }
+
+  @Override
   public List<Post> findAll(HttpServletRequest request) {
     String token = jwtProvider.resolveToken(request);
     String identifier = jwtProvider.getIdentifier(token);
