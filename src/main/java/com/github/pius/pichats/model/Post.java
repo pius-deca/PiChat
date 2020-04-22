@@ -26,11 +26,11 @@ public class Post extends GeneralBaseEntity{
   @JoinColumn(name = "user_id")
   private User user;
 
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "post", fetch = FetchType.LAZY)
+  @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, mappedBy = "post", orphanRemoval = true)
   @JsonIgnore
   private List<Comment> comments;
 
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "post", fetch = FetchType.EAGER)
+  @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "post", orphanRemoval = true)
   @JsonIgnore
   private List<Like> likes;
 }

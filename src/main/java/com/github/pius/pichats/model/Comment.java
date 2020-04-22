@@ -1,5 +1,6 @@
 package com.github.pius.pichats.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,6 +24,7 @@ public class Comment extends GeneralBaseEntity{
 
   @ManyToOne
   @JoinColumn(name = "post_id")
+  @JsonIgnore
   private Post post;
 
 }
