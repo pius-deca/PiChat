@@ -1,0 +1,71 @@
+package com.github.pius.pichats.service;
+
+import com.github.pius.pichats.exceptions.CustomException;
+import com.github.pius.pichats.model.Comment;
+import com.github.pius.pichats.model.Like;
+import com.github.pius.pichats.model.Post;
+import com.github.pius.pichats.model.User;
+import com.github.pius.pichats.repository.CommentRepository;
+import com.github.pius.pichats.repository.LikeRepository;
+import com.github.pius.pichats.repository.UserRepository;
+import com.github.pius.pichats.security.JwtProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
+
+@Service
+public class LikeServiceImpl implements LikeService {
+  private LikeRepository likeRepository;
+  private UserRepository userRepository;
+  private JwtProvider jwtProvider;
+  private PostService postService;
+
+  @Autowired
+  public LikeServiceImpl(LikeRepository likeRepository, UserRepository userRepository, JwtProvider jwtProvider, PostService postService) {
+    this.likeRepository = likeRepository;
+    this.userRepository = userRepository;
+    this.jwtProvider = jwtProvider;
+    this.postService = postService;
+  }
+
+  @Override
+  public Like likeOrUnlike(Long postId, HttpServletRequest request) {
+    String token = jwtProvider.resolveToken(request);
+    String identifier = jwtProvider.getIdentifier(token);
+    try{
+      Optional<User> userByEmail = userRepository.findByEmail(identifier);
+      Optional<User> userByUsername = userRepository.findByUsername(identifier);
+      Post post = postService.findPostById(postId);
+      Like newLike = new Like();
+      Optional<Like> foundLike = likeRepository.findByPost(post);
+      if (!userByEmail.isPresent()){
+        if (userByUsername.isPresent()){
+          return updateLike(userByUsername, post, newLike, foundLike);
+        }
+        throw new CustomException("User does not exists", HttpStatus.NOT_FOUND);
+      }else{
+        return updateLike(userByEmail, post, newLike, foundLike);
+      }
+    }catch (Exception ex){
+      throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+  }
+
+  private Like updateLike(Optional<User> identifier, Post post, Like newLike, Optional<Like> foundLike) {
+    if (foundLike.isPresent()){
+      if (foundLike.get().isLikes()){
+        foundLike.get().setLikes(false);
+        return likeRepository.save(foundLike.get());
+      }
+      foundLike.get().setLikes(true);
+      return likeRepository.save(foundLike.get());
+    }
+    newLike.setUser(identifier.get());
+    newLike.setPost(post);
+    newLike.setLikes(true);
+    return likeRepository.save(newLike);
+  }
+}

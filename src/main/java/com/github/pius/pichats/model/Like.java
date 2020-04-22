@@ -19,7 +19,9 @@ public class Like extends GeneralBaseEntity{
   @Column(columnDefinition = "boolean default false", nullable = false)
   private boolean likes;
 
-  private String user_identifier;
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id")
+  private User user;
 
   @ManyToOne
   @JoinColumn(name = "post_id")
