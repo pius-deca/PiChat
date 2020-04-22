@@ -38,7 +38,7 @@ public class PostController {
     Post postFound = postService.findPost(post, request);
     ApiResponse<Post> response = new ApiResponse<>(HttpStatus.OK);
     response.setData(postFound);
-    response.setMessage("All posts have been retrieved");
+    response.setMessage("Post have been retrieved");
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
@@ -47,7 +47,15 @@ public class PostController {
     List<Post> posts = postService.findAll(request);
     ApiResponse<List<Post>> response = new ApiResponse<>(HttpStatus.OK);
     response.setData(posts);
-    response.setMessage("Post have been retrieved");
+    response.setMessage("All posts have been retrieved");
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  @DeleteMapping("/{post}")
+  public ResponseEntity<ApiResponse<String>> deleteAPost(@PathVariable(name = "post") String post, HttpServletRequest request) throws Exception {
+    postService.delete(post, request);
+    ApiResponse<String> response = new ApiResponse<>(HttpStatus.OK);
+    response.setMessage("Post have been deleted");
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 

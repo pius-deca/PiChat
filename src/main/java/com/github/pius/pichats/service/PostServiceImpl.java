@@ -63,6 +63,28 @@ public class PostServiceImpl implements PostService {
     }
   }
 
+  protected void deleteFile(String post) throws Exception {
+    try {
+      String publicId = null;
+      String folder = "piChat";
+      String resource_type = null;
+      if (post.startsWith("image")){
+        folder = folder+"/image/";
+        publicId = folder+post;
+        resource_type = "image";
+      }else if(post.startsWith("video")){
+        folder = folder+"/video/";
+        publicId = folder+post;
+        resource_type = "video";
+      }
+      Map params = ObjectUtils.asMap("public_id", folder + post,
+        "resource_type", resource_type);
+      cloudConfiguration.configCloud().uploader().destroy(publicId, params);
+    }catch (IOException ex){
+      throw new Exception(ex.getMessage());
+    }
+  }
+
   @Override
   public Post post(Post post, HttpServletRequest request) {
     String token = jwtProvider.resolveToken(request);
@@ -145,5 +167,16 @@ public class PostServiceImpl implements PostService {
     }catch (Exception ex){
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
+  }
+
+  @Override
+  public void delete(String post, HttpServletRequest request) throws Exception {
+    deleteFile(post);
+    postRepository.delete(findPost(post, request));
+  }
+
+  @Override
+  public void deleteAll(HttpServletRequest request) {
+    postRepository.deleteAll(findAll(request));
   }
 }
