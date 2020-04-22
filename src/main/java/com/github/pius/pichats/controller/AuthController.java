@@ -18,13 +18,12 @@ import javax.validation.Valid;
 @RequestMapping("/user")
 public class AuthController {
   private AuthService authService;
-
-  @Autowired
   private ModelMapper modelMapper;
 
   @Autowired
-  public AuthController(AuthService authService) {
+  public AuthController(AuthService authService, ModelMapper modelMapper) {
     this.authService = authService;
+    this.modelMapper = modelMapper;
   }
 
   @PostMapping("/signup")

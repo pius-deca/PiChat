@@ -20,7 +20,6 @@ public class Post extends GeneralBaseEntity{
   private String caption;
 
   @NotBlank(message = "Please provide a post")
-  @Column(nullable = false)
   private String post;
 
   @ManyToOne
