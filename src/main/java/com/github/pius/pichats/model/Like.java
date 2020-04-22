@@ -9,11 +9,10 @@ import javax.persistence.*;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
-@Entity
-@Table(name = "likes")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity(name = "likes")
 public class Like extends GeneralBaseEntity{
 
   @Column(columnDefinition = "boolean default false", nullable = false)

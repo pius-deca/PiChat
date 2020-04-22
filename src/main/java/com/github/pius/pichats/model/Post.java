@@ -1,5 +1,6 @@
 package com.github.pius.pichats.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -10,11 +11,10 @@ import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
-@Entity
-@Table(name = "posts")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity(name = "posts")
 public class Post extends GeneralBaseEntity{
 
   private String caption;
@@ -28,8 +28,10 @@ public class Post extends GeneralBaseEntity{
   private User user;
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "post", fetch = FetchType.LAZY)
+  @JsonIgnore
   private List<Comment> comments;
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "post", fetch = FetchType.EAGER)
+  @JsonIgnore
   private List<Like> likes;
 }

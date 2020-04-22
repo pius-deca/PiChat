@@ -9,11 +9,10 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
 @EqualsAndHashCode(callSuper = true)
-@Entity
-@Table(name = "comments")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity(name = "comments")
 public class Comment extends GeneralBaseEntity{
 
   @NotBlank(message = "Please provide a comment")

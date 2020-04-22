@@ -8,6 +8,10 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         ddl-auto: create
+        jdbc:
+          lob:
+            non_contextual_creation: true
+    generate-ddl: true
   datasource:
     url: ${DATABASE_URL:jdbc:postgresql://${DB_HOST:localhost}:5432/pichat}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}

@@ -1,5 +1,6 @@
 package com.github.pius.pichats.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,20 +12,19 @@ import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
-@Entity
-@Table(name = "users")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity(name = "users")
 public class User extends GeneralBaseEntity{
 
   @NotBlank(message = "Please provide first name")
-  @Column(nullable = false)
-  private String first_name;
+  @Column(nullable = false, name = "first_name")
+  private String firstName;
 
   @NotBlank(message = "Please provide last name")
-  @Column(nullable = false)
-  private String last_name;
+  @Column(nullable = false, name = "last_name")
+  private String lastName;
 
   @Email(message = "Email should be valid")
   @Column(nullable = false)
@@ -39,5 +39,6 @@ public class User extends GeneralBaseEntity{
   private String password;
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
+  @JsonIgnore
   private List<Post> posts;
 }
