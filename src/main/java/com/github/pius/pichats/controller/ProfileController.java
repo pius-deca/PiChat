@@ -33,4 +33,12 @@ public class ProfileController {
     response.setMessage("A user has updated is profile picture");
     return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
+
+  @DeleteMapping("/user_profile/{pic}")
+  public ResponseEntity<ApiResponse<String>> deleteProfile(@PathVariable(name = "pic") String profile, HttpServletRequest request) throws Exception {
+    profileService.delete(profile, request);
+    ApiResponse<String> response = new ApiResponse<>(HttpStatus.OK);
+    response.setMessage("Profile picture has been deleted");
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
 }

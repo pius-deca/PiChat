@@ -1,6 +1,7 @@
 package com.github.pius.pichats.service;
 
 import com.github.pius.pichats.exceptions.CustomException;
+import com.github.pius.pichats.model.Post;
 import com.github.pius.pichats.model.ProfilePic;
 import com.github.pius.pichats.model.User;
 import com.github.pius.pichats.repository.ProfileRepository;
@@ -29,6 +30,26 @@ public class ProfileServiceImpl implements ProfileService{
     this.cloudService = cloudService;
   }
 
+  protected String pictureFormat(String pic){
+    if (pic.endsWith(".jpg") || pic.endsWith(".png")){
+      return pic;
+    }else{
+      throw new CustomException("Profile picture must be picture format", HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  protected ProfilePic getProfile(String pic) {
+    try{
+      Optional<ProfilePic> profileFound = profileRepository.findByProfilePic(pic);
+      if (profileFound.isPresent()){
+        return profileFound.get();
+      }
+      throw new CustomException("Post : "+pic+ " does not exists", HttpStatus.NOT_FOUND);
+    }catch (Exception ex){
+      throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+  }
+
   @Override
   public ProfilePic uploadProfile(ProfilePic pic, HttpServletRequest request) {
     String token = jwtProvider.resolveToken(request);
@@ -41,7 +62,7 @@ public class ProfileServiceImpl implements ProfileService{
         if (userByUsername.isPresent()){
           Optional<ProfilePic> profilePic = profileRepository.findByUser(userByUsername.get());
           // upload post if username exists
-          cloudService.upload(pic.getProfilePic());
+          cloudService.upload(pictureFormat(pic.getProfilePic()));
           if (profilePic.isPresent()){
             // delete the previous profile before uploading a new one
             cloudService.deleteFile(profilePic.get().getProfilePic());
@@ -56,7 +77,7 @@ public class ProfileServiceImpl implements ProfileService{
       }else{
         Optional<ProfilePic> profilePic = profileRepository.findByUser(userByEmail.get());
         // upload post if username exists
-        cloudService.upload(pic.getProfilePic());
+        cloudService.upload(pictureFormat(pic.getProfilePic()));
         if (profilePic.isPresent()){
           // delete the previous profile before uploading a new one
           cloudService.deleteFile(profilePic.get().getProfilePic());
@@ -70,5 +91,36 @@ public class ProfileServiceImpl implements ProfileService{
     }catch (Exception ex){
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
+  }
+
+  @Override
+  public ProfilePic find(String pic, HttpServletRequest request) {
+    String token = jwtProvider.resolveToken(request);
+    String identifier = jwtProvider.getIdentifier(token);
+    try{
+      Optional<User> userByEmail = userRepository.findByEmail(identifier);
+      Optional<User> userByUsername = userRepository.findByUsername(identifier);
+      ProfilePic profile = getProfile(pic);
+      if (!userByEmail.isPresent()){
+        if (userByUsername.isPresent()){
+          if (profile.getUser().equals(userByUsername.get())){
+            return profile;
+          }
+          throw new CustomException(identifier+ " does not have profile "+pic, HttpStatus.NOT_FOUND);
+        }
+        throw new CustomException("User does not exists", HttpStatus.NOT_FOUND);
+      }
+      if (profile.getUser().equals(userByEmail.get())) {
+        return profile;
+      }
+      throw new CustomException(identifier+ " does not have profile "+pic, HttpStatus.NOT_FOUND);
+    }catch (Exception ex){
+      throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+  }
+
+  public void delete(String profile, HttpServletRequest request) throws Exception {
+    cloudService.deleteFile(profile);
+    profileRepository.delete(find(profile, request));
   }
 }

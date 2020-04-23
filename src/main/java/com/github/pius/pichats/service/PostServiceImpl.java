@@ -34,6 +34,7 @@ public class PostServiceImpl implements PostService {
     this.postRepository = postRepository;
     this.cloudService = cloudService;
   }
+
   // random post to comment on by any user
   @Override
   public Post getPost(String post) {

@@ -2,9 +2,6 @@ package com.github.pius.pichats.service;
 
 import com.cloudinary.utils.ObjectUtils;
 import com.github.pius.pichats.configuration.CloudConfiguration;
-import com.github.pius.pichats.repository.PostRepository;
-import com.github.pius.pichats.repository.UserRepository;
-import com.github.pius.pichats.security.JwtProvider;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
