@@ -28,22 +28,22 @@ public class CommentController {
   }
 
   @PostMapping("/post/{postId}/comment")
-  public ResponseEntity<ApiResponse<Comment>> comment(@PathVariable(name = "postId") Long postId, @Valid @RequestBody CommentDTO comment, HttpServletRequest request){
-    Comment newComment = commentService.makeComment(postId, modelMapper.map(comment, Comment.class), request);
+  public ResponseEntity<ApiResponse<Comment>> comment(@PathVariable(name = "postId") String post, @Valid @RequestBody CommentDTO comment, HttpServletRequest request){
+    Comment newComment = commentService.makeComment(post, modelMapper.map(comment, Comment.class), request);
     ApiResponse<Comment> response = new ApiResponse<>(HttpStatus.CREATED);
     response.setData(newComment);
-    response.setMessage("A post has been commented on successfully by a user");
+    response.setMessage("Post of id : "+post+" has been commented on successfully by a user");
     return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
 
-//  @GetMapping("/{post}")
-//  public ResponseEntity<ApiResponse<Post>> getAPost(@PathVariable(name = "post") String post, HttpServletRequest request){
-//    Post postFound = postService.findPost(post, request);
-//    ApiResponse<Post> response = new ApiResponse<>(HttpStatus.OK);
-//    response.setData(postFound);
-//    response.setMessage("Post have been retrieved");
-//    return new ResponseEntity<>(response, HttpStatus.OK);
-//  }
+  @GetMapping("/post/{postId}/comment")
+  public ResponseEntity<ApiResponse<List<Comment>>> AllCommentsForPost(@PathVariable(name = "postId") String post, HttpServletRequest request){
+    List<Comment> comments = commentService.getAllCommentsForAPost(post, request);
+    ApiResponse<List<Comment>> response = new ApiResponse<>(HttpStatus.OK);
+    response.setData(comments);
+    response.setMessage("All comments have been retrieved for post of id : "+post);
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
 //
 //  @GetMapping()
 //  public ResponseEntity<ApiResponse<List<Post>>> getAllPosts(HttpServletRequest request){

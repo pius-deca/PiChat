@@ -4,8 +4,10 @@ import com.github.pius.pichats.model.Comment;
 import com.github.pius.pichats.model.Post;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 public interface CommentService {
-  Comment makeComment(Long postId, Comment comment, HttpServletRequest request);
+  Comment makeComment(String post, Comment comment, HttpServletRequest request);
+  List<Comment> getAllCommentsForAPost(String post, HttpServletRequest request);
 
 }

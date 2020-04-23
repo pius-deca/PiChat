@@ -8,7 +8,7 @@ import java.util.List;
 public interface PostService {
   Post post(Post post, HttpServletRequest request);
   Post findPost(String post, HttpServletRequest request);
-  Post findPostById(Long postId);
+  Post getPost(String post);
   List<Post> findAll(HttpServletRequest request);
   void delete(String post, HttpServletRequest request) throws Exception;
   void deleteAll(HttpServletRequest request);

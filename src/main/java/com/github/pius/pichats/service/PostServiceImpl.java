@@ -36,10 +36,6 @@ public class PostServiceImpl implements PostService {
     this.cloudConfiguration = cloudConfiguration;
   }
 
-//  protected String extension(String path){
-//    return path.substring(path.length() - 3);
-//  }
-
   protected void upload(String path) throws Exception {
     try {
       String num = RandomStringUtils.randomNumeric(5);
@@ -85,6 +81,20 @@ public class PostServiceImpl implements PostService {
     }
   }
 
+  // random post to comment on by any user
+  @Override
+  public Post getPost(String post) {
+    try{
+      Optional<Post> postFound = postRepository.findByPost(post);
+      if (postFound.isPresent()){
+        return postFound.get();
+      }
+      throw new CustomException("Post : "+post+ " does not exists", HttpStatus.NOT_FOUND);
+    }catch (Exception ex){
+      throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+  }
+
   @Override
   public Post post(Post post, HttpServletRequest request) {
     String token = jwtProvider.resolveToken(request);
@@ -124,39 +134,20 @@ public class PostServiceImpl implements PostService {
     try{
       Optional<User> userByEmail = userRepository.findByEmail(identifier);
       Optional<User> userByUsername = userRepository.findByUsername(identifier);
-      Optional<Post> postFound = postRepository.findByPost(post);
+      Post postFound = getPost(post);
       if (!userByEmail.isPresent()){
         if (userByUsername.isPresent()){
-          if (postFound.isPresent()){
-            if (postFound.get().getUser().equals(userByUsername.get())){
-              return postFound.get();
-            }
-            throw new CustomException(identifier+ " does not have project "+post, HttpStatus.NOT_FOUND);
+          if (postFound.getUser().equals(userByUsername.get())){
+            return postFound;
           }
-          throw new CustomException(post+ " does not exists", HttpStatus.NOT_FOUND);
+          throw new CustomException(identifier+ " does not have project "+post, HttpStatus.NOT_FOUND);
         }
         throw new CustomException("User does not exists", HttpStatus.NOT_FOUND);
       }
-      if (postFound.isPresent()){
-        if (postFound.get().getUser().equals(userByEmail.get())){
-          return postFound.get();
-        }
-        throw new CustomException(identifier+ " does not have project "+post, HttpStatus.NOT_FOUND);
+      if (postFound.getUser().equals(userByEmail.get())){
+        return postFound;
       }
-      throw new CustomException(post+ " does not exists", HttpStatus.NOT_FOUND);
-    }catch (Exception ex){
-      throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
-    }
-  }
-
-  @Override
-  public Post findPostById(Long postId) {
-    try{
-      Optional<Post> postFound = postRepository.findById(postId);
-      if (postFound.isPresent()){
-        return postFound.get();
-      }
-      throw new CustomException("Post of id : "+postId+ " does not exists", HttpStatus.NOT_FOUND);
+      throw new CustomException(identifier+ " does not have project "+post, HttpStatus.NOT_FOUND);
     }catch (Exception ex){
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }

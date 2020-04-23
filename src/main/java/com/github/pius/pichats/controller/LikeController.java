@@ -19,8 +19,8 @@ public class LikeController {
   }
 
   @PostMapping("/post/{postId}/like")
-  public ResponseEntity<ApiResponse<Like>> comment(@PathVariable(name = "postId") Long postId, HttpServletRequest request){
-    Like newLike = likeService.likeOrUnlike(postId, request);
+  public ResponseEntity<ApiResponse<Like>> comment(@PathVariable(name = "postId") String post, HttpServletRequest request){
+    Like newLike = likeService.likeOrUnlike(post, request);
     ApiResponse<Like> response = new ApiResponse<>(HttpStatus.CREATED);
     response.setData(newLike);
     response.setMessage("A post has been liked by a user");

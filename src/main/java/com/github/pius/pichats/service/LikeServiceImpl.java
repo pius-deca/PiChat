@@ -32,29 +32,31 @@ public class LikeServiceImpl implements LikeService {
   }
 
   @Override
-  public Like likeOrUnlike(Long postId, HttpServletRequest request) {
+  public Like likeOrUnlike(String post, HttpServletRequest request) {
     String token = jwtProvider.resolveToken(request);
     String identifier = jwtProvider.getIdentifier(token);
     try{
       Optional<User> userByEmail = userRepository.findByEmail(identifier);
       Optional<User> userByUsername = userRepository.findByUsername(identifier);
-      Post post = postService.findPostById(postId);
+
+      // find any post to like
+      Post postFound = postService.getPost(post);
       Like newLike = new Like();
-      Optional<Like> foundLike = likeRepository.findByPost(post);
+      Optional<Like> foundLike = likeRepository.findByPost(postFound);
       if (!userByEmail.isPresent()){
         if (userByUsername.isPresent()){
-          return updateLike(userByUsername, post, newLike, foundLike);
+          return updateLike(userByUsername, postFound, newLike, foundLike);
         }
         throw new CustomException("User does not exists", HttpStatus.NOT_FOUND);
       }else{
-        return updateLike(userByEmail, post, newLike, foundLike);
+        return updateLike(userByEmail, postFound, newLike, foundLike);
       }
     }catch (Exception ex){
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
   }
 
-  private Like updateLike(Optional<User> identifier, Post post, Like newLike, Optional<Like> foundLike) {
+  private Like updateLike(Optional<User> identifier, Post postFound, Like newLike, Optional<Like> foundLike) {
     if (foundLike.isPresent()){
       if (foundLike.get().isLikes()){
         foundLike.get().setLikes(false);
@@ -64,7 +66,7 @@ public class LikeServiceImpl implements LikeService {
       return likeRepository.save(foundLike.get());
     }
     newLike.setUser(identifier.get());
-    newLike.setPost(post);
+    newLike.setPost(postFound);
     newLike.setLikes(true);
     return likeRepository.save(newLike);
   }
