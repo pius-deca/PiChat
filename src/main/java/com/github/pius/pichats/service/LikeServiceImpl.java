@@ -31,6 +31,7 @@ public class LikeServiceImpl implements LikeService {
     this.postService = postService;
   }
 
+  // this method enables a user likes or unlikes a post made by any user
   @Override
   public Like likeOrUnlike(String post, HttpServletRequest request) {
     String token = jwtProvider.resolveToken(request);
@@ -56,6 +57,7 @@ public class LikeServiceImpl implements LikeService {
     }
   }
 
+  // this method likes or unlikes
   private Like updateLike(Optional<User> identifier, Post postFound, Like newLike, Optional<Like> foundLike) {
     if (foundLike.isPresent()){
       if (foundLike.get().isLikes()){

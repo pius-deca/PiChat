@@ -46,4 +46,7 @@ public class User extends GeneralBaseEntity{
   @JsonIgnore
   private ProfilePic profilePic;
 
+  @OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, mappedBy = "user", orphanRemoval = true)
+  @JsonIgnore
+  private Bio bio;
 }

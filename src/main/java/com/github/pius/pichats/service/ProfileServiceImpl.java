@@ -30,6 +30,7 @@ public class ProfileServiceImpl implements ProfileService{
     this.cloudService = cloudService;
   }
 
+  // this method validates picture format
   protected String pictureFormat(String pic){
     if (pic.endsWith(".jpg") || pic.endsWith(".png")){
       return pic;
@@ -38,6 +39,7 @@ public class ProfileServiceImpl implements ProfileService{
     }
   }
 
+  // this method get a particular profile
   protected ProfilePic getProfile(String pic) {
     try{
       Optional<ProfilePic> profileFound = profileRepository.findByProfilePic(pic);
@@ -50,6 +52,7 @@ public class ProfileServiceImpl implements ProfileService{
     }
   }
 
+  // this method uploads and edits profile
   @Override
   public ProfilePic uploadProfile(ProfilePic pic, HttpServletRequest request) {
     String token = jwtProvider.resolveToken(request);
@@ -93,6 +96,7 @@ public class ProfileServiceImpl implements ProfileService{
     }
   }
 
+  // this method finds a profile that belongs to a user
   @Override
   public ProfilePic find(String pic, HttpServletRequest request) {
     String token = jwtProvider.resolveToken(request);
@@ -119,6 +123,7 @@ public class ProfileServiceImpl implements ProfileService{
     }
   }
 
+  // this method deletes the profile that belongs to a user
   public void delete(String profile, HttpServletRequest request) throws Exception {
     cloudService.deleteFile(profile);
     profileRepository.delete(find(profile, request));

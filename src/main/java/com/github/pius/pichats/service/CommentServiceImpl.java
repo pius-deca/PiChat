@@ -31,6 +31,7 @@ public class CommentServiceImpl implements CommentService {
     this.postService = postService;
   }
 
+  // this method enables a user find a post made by any user and make comments on it
   @Override
   public Comment makeComment(String post, Comment comment, HttpServletRequest request) {
     String token = jwtProvider.resolveToken(request);
@@ -61,6 +62,7 @@ public class CommentServiceImpl implements CommentService {
     }
   }
 
+  // this method finds a post user has made and get all comments on the post
   @Override
   public List<Comment> getAllCommentsForAPost(String post, HttpServletRequest request) {
     return commentRepository.findByPost(postService.findPost(post, request));
