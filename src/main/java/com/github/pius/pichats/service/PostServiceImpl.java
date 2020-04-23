@@ -25,62 +25,15 @@ public class PostServiceImpl implements PostService {
   private JwtProvider jwtProvider;
   private UserRepository userRepository;
   private PostRepository postRepository;
-  private CloudConfiguration cloudConfiguration;
-  String fileName = null;
+  private CloudService cloudService;
 
   @Autowired
-  public PostServiceImpl(JwtProvider jwtProvider, UserRepository userRepository, PostRepository postRepository, CloudConfiguration cloudConfiguration) {
+  public PostServiceImpl(JwtProvider jwtProvider, UserRepository userRepository, PostRepository postRepository, CloudService cloudService) {
     this.jwtProvider = jwtProvider;
     this.userRepository = userRepository;
     this.postRepository = postRepository;
-    this.cloudConfiguration = cloudConfiguration;
+    this.cloudService = cloudService;
   }
-
-  protected void upload(String path) throws Exception {
-    try {
-      String num = RandomStringUtils.randomNumeric(5);
-      File toUpload = new File(path);
-      String folder = "piChat";
-      String resource_type = null;
-      if (path.endsWith(".jpg") || path.endsWith(".png") || path.endsWith(".pdf")){
-        fileName = "image" + num;
-        folder = folder+"/image/";
-        resource_type = "image";
-      }else if(path.endsWith(".mp4") || path.endsWith(".avi")){
-        fileName = "video" + num;
-        folder = folder+"/video/";
-        resource_type = "video";
-      }
-      Map params = ObjectUtils.asMap("public_id", folder + fileName,
-        "resource_type", resource_type);
-      cloudConfiguration.configCloud().uploader().upload(toUpload, params);
-    }catch (IOException ex){
-      throw new Exception(ex.getMessage());
-    }
-  }
-
-  protected void deleteFile(String post) throws Exception {
-    try {
-      String publicId = null;
-      String folder = "piChat";
-      String resource_type = null;
-      if (post.startsWith("image")){
-        folder = folder+"/image/";
-        publicId = folder+post;
-        resource_type = "image";
-      }else if(post.startsWith("video")){
-        folder = folder+"/video/";
-        publicId = folder+post;
-        resource_type = "video";
-      }
-      Map params = ObjectUtils.asMap("public_id", folder + post,
-        "resource_type", resource_type);
-      cloudConfiguration.configCloud().uploader().destroy(publicId, params);
-    }catch (IOException ex){
-      throw new Exception(ex.getMessage());
-    }
-  }
-
   // random post to comment on by any user
   @Override
   public Post getPost(String post) {
@@ -107,8 +60,8 @@ public class PostServiceImpl implements PostService {
           Post newPost = new Post();
           newPost.setCaption(post.getCaption());
           // upload post if username exists
-          upload(post.getPost());
-          newPost.setPost(fileName);
+          cloudService.upload(post.getPost());
+          newPost.setPost(cloudService.fileName);
           newPost.setUser(userByUsername.get());
           return postRepository.save(newPost);
         }
@@ -117,8 +70,8 @@ public class PostServiceImpl implements PostService {
         Post newPost = new Post();
         newPost.setCaption(post.getCaption());
         // upload post if email exists
-        upload(post.getPost());
-        newPost.setPost(fileName);
+        cloudService.upload(post.getPost());
+        newPost.setPost(cloudService.fileName);
         newPost.setUser(userByEmail.get());
         return postRepository.save(newPost);
       }
@@ -175,7 +128,7 @@ public class PostServiceImpl implements PostService {
 
   @Override
   public void delete(String post, HttpServletRequest request) throws Exception {
-    deleteFile(post);
+    cloudService.deleteFile(post);
     postRepository.delete(findPost(post, request));
   }
 

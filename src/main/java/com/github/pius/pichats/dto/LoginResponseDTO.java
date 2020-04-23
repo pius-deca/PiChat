@@ -1,7 +1,9 @@
 package com.github.pius.pichats.dto;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class LoginResponseDTO extends SignupRequestDTO{
   private String token;
