@@ -2,9 +2,7 @@ package com.github.pius.pichats.controller;
 
 import com.github.pius.pichats.apiresponse.ApiResponse;
 import com.github.pius.pichats.dto.ProfilePicDTO;
-import com.github.pius.pichats.model.Like;
 import com.github.pius.pichats.model.ProfilePic;
-import com.github.pius.pichats.service.LikeService;
 import com.github.pius.pichats.service.ProfileService;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -25,7 +23,7 @@ public class ProfileController {
     this.modelMapper = modelMapper;
   }
 
-  @PostMapping("/user_profile")
+  @PostMapping("/user/profile")
   public ResponseEntity<ApiResponse<ProfilePic>> updateProfile(@Valid @RequestBody ProfilePicDTO profile, HttpServletRequest request){
     ProfilePic newProfile = profileService.uploadProfile(modelMapper.map(profile, ProfilePic.class), request);
     ApiResponse<ProfilePic> response = new ApiResponse<>(HttpStatus.CREATED);
@@ -34,7 +32,7 @@ public class ProfileController {
     return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
 
-  @DeleteMapping("/user_profile/{pic}")
+  @DeleteMapping("/user/profile/{pic}")
   public ResponseEntity<ApiResponse<String>> deleteProfile(@PathVariable(name = "pic") String profile, HttpServletRequest request) throws Exception {
     profileService.delete(profile, request);
     ApiResponse<String> response = new ApiResponse<>(HttpStatus.OK);

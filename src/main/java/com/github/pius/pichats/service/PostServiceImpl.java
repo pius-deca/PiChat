@@ -1,23 +1,17 @@
 package com.github.pius.pichats.service;
 
-import com.cloudinary.utils.ObjectUtils;
-import com.github.pius.pichats.configuration.CloudConfiguration;
 import com.github.pius.pichats.exceptions.CustomException;
 import com.github.pius.pichats.model.Post;
 import com.github.pius.pichats.model.User;
 import com.github.pius.pichats.repository.PostRepository;
 import com.github.pius.pichats.repository.UserRepository;
 import com.github.pius.pichats.security.JwtProvider;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -39,11 +33,7 @@ public class PostServiceImpl implements PostService {
   @Override
   public Post getPost(String post) {
     try{
-      Optional<Post> postFound = postRepository.findByPost(post);
-      if (postFound.isPresent()){
-        return postFound.get();
-      }
-      throw new CustomException("Post : "+post+ " does not exists", HttpStatus.NOT_FOUND);
+      return postRepository.findByPost(post).orElseThrow(() -> new CustomException("Post : "+post+ " does not exists", HttpStatus.NOT_FOUND));
     }catch (Exception ex){
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
@@ -94,14 +84,14 @@ public class PostServiceImpl implements PostService {
           if (postFound.getUser().equals(userByUsername.get())){
             return postFound;
           }
-          throw new CustomException(identifier+ " does not have project "+post, HttpStatus.NOT_FOUND);
+          throw new CustomException(identifier+ " does not have post "+post, HttpStatus.NOT_FOUND);
         }
         throw new CustomException("User does not exists", HttpStatus.NOT_FOUND);
       }
       if (postFound.getUser().equals(userByEmail.get())){
         return postFound;
       }
-      throw new CustomException(identifier+ " does not have project "+post, HttpStatus.NOT_FOUND);
+      throw new CustomException(identifier+ " does not have post "+post, HttpStatus.NOT_FOUND);
     }catch (Exception ex){
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }

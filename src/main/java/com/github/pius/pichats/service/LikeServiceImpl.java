@@ -1,11 +1,9 @@
 package com.github.pius.pichats.service;
 
 import com.github.pius.pichats.exceptions.CustomException;
-import com.github.pius.pichats.model.Comment;
 import com.github.pius.pichats.model.Like;
 import com.github.pius.pichats.model.Post;
 import com.github.pius.pichats.model.User;
-import com.github.pius.pichats.repository.CommentRepository;
 import com.github.pius.pichats.repository.LikeRepository;
 import com.github.pius.pichats.repository.UserRepository;
 import com.github.pius.pichats.security.JwtProvider;
@@ -46,11 +44,11 @@ public class LikeServiceImpl implements LikeService {
       Optional<Like> foundLike = likeRepository.findByPost(postFound);
       if (!userByEmail.isPresent()){
         if (userByUsername.isPresent()){
-          return updateLike(userByUsername, postFound, newLike, foundLike);
+          return saveLike(userByUsername, postFound, newLike, foundLike);
         }
         throw new CustomException("User does not exists", HttpStatus.NOT_FOUND);
       }else{
-        return updateLike(userByEmail, postFound, newLike, foundLike);
+        return saveLike(userByEmail, postFound, newLike, foundLike);
       }
     }catch (Exception ex){
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
@@ -58,7 +56,7 @@ public class LikeServiceImpl implements LikeService {
   }
 
   // this method likes or unlikes
-  private Like updateLike(Optional<User> identifier, Post postFound, Like newLike, Optional<Like> foundLike) {
+  private Like saveLike(Optional<User> identifier, Post postFound, Like newLike, Optional<Like> foundLike) {
     if (foundLike.isPresent()){
       if (foundLike.get().isLikes()){
         foundLike.get().setLikes(false);

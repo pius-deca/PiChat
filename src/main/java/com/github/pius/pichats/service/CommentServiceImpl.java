@@ -5,7 +5,6 @@ import com.github.pius.pichats.model.Comment;
 import com.github.pius.pichats.model.Post;
 import com.github.pius.pichats.model.User;
 import com.github.pius.pichats.repository.CommentRepository;
-import com.github.pius.pichats.repository.PostRepository;
 import com.github.pius.pichats.repository.UserRepository;
 import com.github.pius.pichats.security.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,14 +46,14 @@ public class CommentServiceImpl implements CommentService {
         if (userByUsername.isPresent()){
           newComment.setComment(comment.getComment());
           newComment.setPost(postFound);
-          newComment.setUser_identifier(identifier);
+          newComment.setUser(userByUsername.get());
           return commentRepository.save(newComment);
         }
         throw new CustomException("User does not exists", HttpStatus.NOT_FOUND);
       }else{
         newComment.setComment(comment.getComment());
         newComment.setPost(postFound);
-        newComment.setUser_identifier(identifier);
+        newComment.setUser(userByEmail.get());
         return commentRepository.save(newComment);
       }
     }catch (Exception ex){

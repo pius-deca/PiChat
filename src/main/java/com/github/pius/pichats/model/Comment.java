@@ -20,7 +20,9 @@ public class Comment extends GeneralBaseEntity{
   @Column(nullable = false)
   private String comment;
 
-  private String user_identifier;
+  @ManyToOne
+  @JoinColumn(name = "user_id")
+  private User user;
 
   @ManyToOne
   @JoinColumn(name = "post_id")

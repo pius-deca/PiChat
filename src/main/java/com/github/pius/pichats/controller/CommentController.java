@@ -2,11 +2,8 @@ package com.github.pius.pichats.controller;
 
 import com.github.pius.pichats.apiresponse.ApiResponse;
 import com.github.pius.pichats.dto.CommentDTO;
-import com.github.pius.pichats.dto.PostDTO;
 import com.github.pius.pichats.model.Comment;
-import com.github.pius.pichats.model.Post;
 import com.github.pius.pichats.service.CommentService;
-import com.github.pius.pichats.service.PostService;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

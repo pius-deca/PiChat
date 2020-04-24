@@ -1,7 +1,6 @@
 package com.github.pius.pichats.service;
 
 import com.github.pius.pichats.exceptions.CustomException;
-import com.github.pius.pichats.model.Post;
 import com.github.pius.pichats.model.ProfilePic;
 import com.github.pius.pichats.model.User;
 import com.github.pius.pichats.repository.ProfileRepository;
@@ -124,6 +123,7 @@ public class ProfileServiceImpl implements ProfileService{
   }
 
   // this method deletes the profile that belongs to a user
+  @Override
   public void delete(String profile, HttpServletRequest request) throws Exception {
     cloudService.deleteFile(profile);
     profileRepository.delete(find(profile, request));

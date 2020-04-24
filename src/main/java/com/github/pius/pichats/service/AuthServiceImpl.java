@@ -2,7 +2,6 @@ package com.github.pius.pichats.service;
 
 import com.github.pius.pichats.dto.LoginRequestDTO;
 import com.github.pius.pichats.dto.LoginResponseDTO;
-import com.github.pius.pichats.dto.SignupRequestDTO;
 import com.github.pius.pichats.exceptions.CustomException;
 import com.github.pius.pichats.model.User;
 import com.github.pius.pichats.repository.UserRepository;
