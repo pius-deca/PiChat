@@ -11,5 +11,7 @@ public interface PostService {
   Post getPost(String post);
   List<Post> findAll(HttpServletRequest request);
   void delete(String post, HttpServletRequest request) throws Exception;
-  void deleteAll(HttpServletRequest request);
+  String selectPostToDelete(String post, HttpServletRequest request);
+  String clearBatchDelete(HttpServletRequest request);
+  String batchDelete(HttpServletRequest request) throws Exception;
 }

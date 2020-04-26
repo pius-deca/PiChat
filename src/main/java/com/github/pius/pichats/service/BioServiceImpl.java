@@ -2,7 +2,6 @@ package com.github.pius.pichats.service;
 
 import com.github.pius.pichats.exceptions.CustomException;
 import com.github.pius.pichats.model.Bio;
-import com.github.pius.pichats.model.ProfilePic;
 import com.github.pius.pichats.model.User;
 import com.github.pius.pichats.repository.BioRepository;
 import com.github.pius.pichats.repository.UserRepository;
@@ -65,5 +64,25 @@ public class BioServiceImpl implements BioService {
     newBio.setPhone(bio.getPhone());
     newBio.setUser(user);
     return bioRepository.save(newBio);
+  }
+
+  @Override
+  public Bio find(HttpServletRequest request) {
+    String token = jwtProvider.resolveToken(request);
+    String identifier = jwtProvider.getIdentifier(token);
+    try{
+      Optional<User> userByEmail = userRepository.findByEmail(identifier);
+      Optional<User> userByUsername = userRepository.findByUsername(identifier);
+      if (!userByEmail.isPresent()){
+        if (userByUsername.isPresent()){
+;         return bioRepository.findByUser(userByUsername.get()).orElseThrow(() -> new CustomException(identifier+" has not set up his/her bio", HttpStatus.NOT_FOUND));
+        }
+        throw new CustomException("User does not exists", HttpStatus.NOT_FOUND);
+      }else{
+        return bioRepository.findByUser(userByEmail.get()).orElseThrow(() -> new CustomException(identifier+" has not set up his/her bio", HttpStatus.NOT_FOUND));
+      }
+    }catch (Exception ex){
+      throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
   }
 }

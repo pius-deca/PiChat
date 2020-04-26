@@ -30,10 +30,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     http.csrf().disable();
     http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     http.authorizeRequests()
-      .antMatchers("/user/login").permitAll()
-      .antMatchers("/user/signup").permitAll()
+      .antMatchers("/auth/**").permitAll()
       .anyRequest().authenticated();
-    http.exceptionHandling().accessDeniedPage("/user/login");
+    http.exceptionHandling().accessDeniedPage("/auth/login");
     http.apply(new JwtFilterConfigurer(jwtProvider));
   }
 

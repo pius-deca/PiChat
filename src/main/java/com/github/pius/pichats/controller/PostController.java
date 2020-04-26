@@ -59,4 +59,27 @@ public class PostController {
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
+  @PostMapping("/{post}/select")
+  public ResponseEntity<ApiResponse<String>> select(@PathVariable(name = "post") String post, HttpServletRequest request){
+    String message = postService.selectPostToDelete(post, request);
+    ApiResponse<String> response = new ApiResponse<>(HttpStatus.OK);
+    response.setMessage(message);
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  @PostMapping("/select/clear")
+  public ResponseEntity<ApiResponse<String>> clearSelectedPosts(HttpServletRequest request){
+    String message = postService.clearBatchDelete(request);
+    ApiResponse<String> response = new ApiResponse<>(HttpStatus.OK);
+    response.setMessage(message);
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  @DeleteMapping()
+  public ResponseEntity<ApiResponse<String>> deleteSelectedPosts(HttpServletRequest request) throws Exception {
+    String message = postService.batchDelete(request);
+    ApiResponse<String> response = new ApiResponse<>(HttpStatus.OK);
+    response.setMessage(message);
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
 }

@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +21,7 @@ public class PostServiceImpl implements PostService {
   private UserRepository userRepository;
   private PostRepository postRepository;
   private CloudService cloudService;
+  private List<String> listOfPosts = new ArrayList<>();
 
   @Autowired
   public PostServiceImpl(JwtProvider jwtProvider, UserRepository userRepository, PostRepository postRepository, CloudService cloudService) {
@@ -39,6 +41,7 @@ public class PostServiceImpl implements PostService {
     }
   }
 
+  // a logged in user makes a post
   @Override
   public Post post(Post post, HttpServletRequest request) {
     String token = jwtProvider.resolveToken(request);
@@ -71,6 +74,7 @@ public class PostServiceImpl implements PostService {
     }
   }
 
+  // find a particular post of a logged in user
   @Override
   public Post findPost(String post, HttpServletRequest request) {
     String token = jwtProvider.resolveToken(request);
@@ -97,6 +101,7 @@ public class PostServiceImpl implements PostService {
     }
   }
 
+  // return all the post of a logged in user
   @Override
   public List<Post> findAll(HttpServletRequest request) {
     String token = jwtProvider.resolveToken(request);
@@ -117,14 +122,47 @@ public class PostServiceImpl implements PostService {
     }
   }
 
+  // find a post of the logged in user and delete
   @Override
   public void delete(String post, HttpServletRequest request) throws Exception {
     cloudService.deleteFile(post);
     postRepository.delete(findPost(post, request));
   }
 
+  // find a post of the logged in user mark put in a list
   @Override
-  public void deleteAll(HttpServletRequest request) {
-    postRepository.deleteAll(findAll(request));
+  public String selectPostToDelete(String post, HttpServletRequest request){
+    Post postFound = findPost(post, request);
+    if (!listOfPosts.contains(postFound.getPost())){
+      listOfPosts.add(postFound.getPost());
+      return "Post : "+post+" have been marked";
+    }
+    listOfPosts.remove(postFound.getPost());
+    return "Post : "+post+" have been unmarked";
   }
+
+  // clear the list of posts if not empty
+  @Override
+  public String clearBatchDelete(HttpServletRequest request){
+    if (!listOfPosts.isEmpty()){
+      listOfPosts.clear();
+      return "Post(s) marked for delete have been canceled";
+    }
+    return "Post(s) marked for delete is empty";
+  }
+
+  // delete the list posts of a logged in user
+  @Override
+  public String batchDelete(HttpServletRequest request) throws Exception {
+    if (!listOfPosts.isEmpty()){
+      for (String post : listOfPosts){
+        System.out.println(post);
+        delete(post, request);
+      }
+      listOfPosts.clear();
+      return "Posts marked have been deleted";
+    }
+    return "There is no post(s) marked to delete";
+  }
+
 }

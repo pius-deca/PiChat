@@ -6,4 +6,5 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface BioService {
   Bio addOrUpdate(Bio bio, HttpServletRequest request);
+  Bio find(HttpServletRequest request);
 }
