@@ -5,7 +5,6 @@ import com.github.pius.pichats.dto.*;
 import com.github.pius.pichats.model.Bio;
 import com.github.pius.pichats.model.ProfilePic;
 import com.github.pius.pichats.model.User;
-import com.github.pius.pichats.service.AuthService;
 import com.github.pius.pichats.service.BioService;
 import com.github.pius.pichats.service.ProfileService;
 import com.github.pius.pichats.service.UserService;
@@ -75,6 +74,14 @@ public class UserController {
     ApiResponse<User> response = new ApiResponse<>(HttpStatus.OK);
     response.setData(searchUser);
     response.setMessage("The user searched for retrieved successfully");
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  @PostMapping("/changePassword")
+  public ResponseEntity<ApiResponse<String>> changePassword(@Valid @RequestBody ChangePasswordDTO changePasswordDTO, HttpServletRequest request){
+    String message = userService.changePassword(changePasswordDTO, request);
+    ApiResponse<String> response = new ApiResponse<>(HttpStatus.OK);
+    response.setMessage(message);
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 }

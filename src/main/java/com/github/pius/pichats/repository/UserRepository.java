@@ -1,6 +1,5 @@
 package com.github.pius.pichats.repository;
 
-import com.github.pius.pichats.dto.SearchUsernameDto;
 import com.github.pius.pichats.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
