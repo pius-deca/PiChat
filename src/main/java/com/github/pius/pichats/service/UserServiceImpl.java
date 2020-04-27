@@ -81,15 +81,12 @@ public class UserServiceImpl implements UserService {
   }
 
   private String newPassword(ChangePasswordDTO passwordDTO, Optional<User> identifier) {
-    System.out.println(passwordEncoder.matches(passwordDTO.getCurrentPassword(), identifier.get().getPassword()));
     if (passwordEncoder.matches(passwordDTO.getCurrentPassword(), identifier.get().getPassword())){
       if (passwordDTO.getNewPassword().equals(passwordDTO.getConfirmPassword())){
-        System.out.println(true);
         identifier.get().setPassword(passwordEncoder.encode(passwordDTO.getNewPassword()));
         userRepository.save(identifier.get());
         return "The user has changed his/her password";
       }
-      System.out.println(false);
       throw new CustomException("New Password not yet confirmed, password must match", HttpStatus.BAD_REQUEST);
     }
     throw new CustomException("Current password is not correct, please enter the correct password", HttpStatus.BAD_REQUEST);
