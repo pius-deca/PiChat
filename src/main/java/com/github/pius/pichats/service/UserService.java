@@ -10,5 +10,7 @@ public interface UserService {
   User searchByUsername(String username, HttpServletRequest request);
   String changePassword(ChangePasswordDTO passwordDTO, HttpServletRequest request);
   Follow follow(String username, HttpServletRequest request);
-  Follow unFollow(String username, HttpServletRequest request);
+  String unFollow(String username, HttpServletRequest request);
+  int countFollowers(HttpServletRequest request);
+  int countFollowing(HttpServletRequest request);
 }

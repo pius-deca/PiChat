@@ -87,6 +87,30 @@ public class UserController {
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
+  @PostMapping("/{username}/unfollow")
+  public ResponseEntity<ApiResponse<String>> unFollow(@PathVariable(name = "username") String username, HttpServletRequest request){
+    String message = userService.unFollow(username, request);
+    ApiResponse<String> response = new ApiResponse<>(HttpStatus.OK);
+    response.setMessage(message);
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  @PostMapping("/followers")
+  public ResponseEntity<ApiResponse<Integer>> followers(HttpServletRequest request){
+    int numOfFollowers = userService.countFollowers(request);
+    ApiResponse<Integer> response = new ApiResponse<>(HttpStatus.OK);
+    response.setData(numOfFollowers);
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  @PostMapping("/following")
+  public ResponseEntity<ApiResponse<Integer>> following(HttpServletRequest request){
+    int numOfFollowing = userService.countFollowing(request);
+    ApiResponse<Integer> response = new ApiResponse<>(HttpStatus.OK);
+    response.setData(numOfFollowing);
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
   @PostMapping("/changePassword")
   public ResponseEntity<ApiResponse<String>> changePassword(@Valid @RequestBody ChangePasswordDTO changePasswordDTO, HttpServletRequest request){
     String message = userService.changePassword(changePasswordDTO, request);

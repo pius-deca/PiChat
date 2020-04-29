@@ -128,5 +128,74 @@ public class UserServiceImpl implements UserService {
     }
   }
 
+  @Override
+  public String unFollow(String username, HttpServletRequest request) {
+    String token = jwtProvider.resolveToken(request);
+    String identifier = jwtProvider.getIdentifier(token);
+    try{
+      Optional<User> userByEmail = userRepository.findByEmail(identifier);
+      Optional<User> userByUsername = userRepository.findByUsername(identifier);
+      searchByUsername(username, request);
+      Optional<Follow> following = followRepository.findByFollowing(username);
+      if (!userByEmail.isPresent()){
+        if (userByUsername.isPresent()){
+          if(following.isPresent()){
+            followRepository.delete(following.get());
+            return "User has unfollowed '"+username+"' successfully";
+          }
+          throw new CustomException("User '"+username+"' has already been unfollowed", HttpStatus.NOT_FOUND);
+        }
+        throw new CustomException("User does not exists", HttpStatus.NOT_FOUND);
+      }else{
+        if(following.isPresent()){
+          followRepository.delete(following.get());
+          return "User has unfollowed '"+username+"' successfully";
+        }
+        throw new CustomException("User '"+username+"' has already been unfollowed", HttpStatus.NOT_FOUND);
+      }
+    }catch (Exception ex){
+      throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+  }
+
+  @Override
+  public int countFollowers(HttpServletRequest request){
+    String token = jwtProvider.resolveToken(request);
+    String identifier = jwtProvider.getIdentifier(token);
+    try{
+      Optional<User> userByEmail = userRepository.findByEmail(identifier);
+      Optional<User> userByUsername = userRepository.findByUsername(identifier);
+      if (!userByEmail.isPresent()){
+        if (userByUsername.isPresent()){
+          return followRepository.countFollowersByFollowing(identifier);
+        }
+        throw new CustomException("User does not exists", HttpStatus.NOT_FOUND);
+      }else{
+        return followRepository.countFollowersByFollowing(userByEmail.get().getUsername());
+      }
+    }catch (Exception ex){
+      throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+  }
+
+  @Override
+  public int countFollowing(HttpServletRequest request){
+    String token = jwtProvider.resolveToken(request);
+    String identifier = jwtProvider.getIdentifier(token);
+    try{
+      Optional<User> userByEmail = userRepository.findByEmail(identifier);
+      Optional<User> userByUsername = userRepository.findByUsername(identifier);
+      if (!userByEmail.isPresent()){
+        if (userByUsername.isPresent()){
+          return followRepository.countFollowingByUser(userByUsername.get());
+        }
+        throw new CustomException("User does not exists", HttpStatus.NOT_FOUND);
+      }else{
+        return followRepository.countFollowingByUser(userByEmail.get());
+      }
+    }catch (Exception ex){
+      throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+  }
 
 }
