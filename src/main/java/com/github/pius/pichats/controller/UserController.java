@@ -68,8 +68,8 @@ public class UserController {
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
-  @PostMapping("/search")
-  public ResponseEntity<ApiResponse<User>> search(@Valid @RequestBody SearchUsernameDto username, HttpServletRequest request){
+  @PostMapping("/{username}")
+  public ResponseEntity<ApiResponse<User>> search(@PathVariable(name = "username") String username, HttpServletRequest request){
     User searchUser = userService.searchByUsername(username, request);
     ApiResponse<User> response = new ApiResponse<>(HttpStatus.OK);
     response.setData(searchUser);

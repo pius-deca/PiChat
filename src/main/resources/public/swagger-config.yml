@@ -1,0 +1,378 @@
+openapi: 3.0.1
+info:
+  contact:
+    email: ebi44ril@gmail.com
+    phone: 08164291922
+  description: This is the api documentation of the pichat api. You can find out more about
+    Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, \#swagger](http://swagger.io/irc/).
+    For this sample, you can use the api key `special-key` to test the authorization
+    filters.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+    title: Api Doc for Pichat
+    version: 1.0.0
+servers:
+  description: Localhost
+  url: http://localhost:3000/api/v1
+tags:
+- name: "auth"
+  description: "Authentication and authorization of users"
+  externalDocs:
+    description: "Find out more"
+    url: "http://swagger.io"
+- name: "user"
+  description: "users perform so operation when authenticated."
+  externalDocs:
+    description: "Find out more"
+    url: "http://swagger.io"
+- name: "post"
+  description: "Operations about post"
+  externalDocs:
+    description: "Find out more"
+    url: "http://swagger.io"
+- name: "comment"
+  description: "Operations about comment"
+- name: "like"
+  description: "Operations about like"
+
+paths:
+  /signup:
+    post:
+      tags:
+        - "auth"
+      summary: "Users registers on pichat"
+      description: ""
+      operationId: "addUser"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        400:
+          $ref: "#/components/responses/User"
+        201:
+          $ref: "#/components/responses/User"
+      security: []
+  /login:
+    post:
+      tags:
+        - "auth"
+      summary: "Users login on pichat"
+      description: ""
+      operationId: "loginUser"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Login"
+      responses:
+        400:
+          $ref: "#/components/responses/Login"
+        200:
+          $ref: "#/components/responses/Login"
+      security: []
+  /user/search:
+    post:
+      tags:
+        - "user"
+      summary: "User search for other users using their username "
+      description: ""
+      operationId: "searchForUsers"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        400:
+          $ref: "#/components/responses/User"
+        200:
+          $ref: "#/components/responses/User"
+  /user/bio:
+    post:
+      tags:
+        - "user"
+      summary: "User updates his/her bio"
+      description: ""
+      operationId: "addBio"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        400:
+          $ref: "#/components/responses/User"
+        201:
+          $ref: "#/components/responses/User"
+    get:
+      tags:
+        - "user"
+      summary: "User view his/her bio"
+      description: ""
+      operationId: "viewBio"
+      responses:
+        400:
+          $ref: "#/components/responses/User"
+        200:
+          $ref: "#/components/responses/User"
+  /user/profile:
+    post:
+      tags:
+        - "user"
+      summary: "User updates profile picture"
+      description: ""
+      operationId: "addProfilePic"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        400:
+          $ref: "#/components/responses/User"
+        201:
+          $ref: "#/components/responses/User"
+  /user/profile/{pic}:
+    delete:
+      tags:
+        - "user"
+      summary: "User updates profile picture"
+      description: ""
+      operationId: "deleteProfilePic"
+      parameters:
+        - name: "pic"
+          required: true
+          in: "path"
+          schema:
+            type: string
+      responses:
+        400:
+          $ref: "#/components/responses/User"
+        200:
+          $ref: "#/components/responses/User"
+  /user/changePassword:
+    post:
+      tags:
+        - "user"
+      summary: "User changes password"
+      description: ""
+      operationId: "changePassword"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        400:
+          $ref: "#/components/responses/User"
+        200:
+          $ref: "#/components/responses/User"
+  /post:
+    post:
+      tags:
+        - "post"
+      summary: "Users make a post on pichat"
+      description: ""
+      operationId: "makePost"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Post"
+      responses:
+        400:
+          $ref: "#/components/responses/Post"
+        201:
+          $ref: "#/components/responses/Post"
+    get:
+      tags:
+        - "post"
+      summary: "Finds all posts of a logged in user"
+      description: ""
+      operationId: "getAllPost"
+      responses:
+        200:
+          $ref: "#/components/responses/Post"
+    delete:
+      tags:
+        - "post"
+      summary: "Delete all marked posts of a logged in user"
+      description: ""
+      operationId: "deleteMarkedPost"
+      responses:
+        200:
+          $ref: "#/components/responses/Post"
+  /post/{post}:
+    get:
+      tags:
+        - "post"
+      summary: "Finds a particular post of a logged in user"
+      description: ""
+      operationId: "getPost"
+      parameters:
+        - name: "post"
+          required: true
+          in: "path"
+          schema:
+            type: string
+      responses:
+        404:
+          $ref: "#/components/responses/Post"
+        200:
+          $ref: "#/components/responses/Post"
+    delete:
+      tags:
+        - "post"
+      summary: "Deletes a particular post of a logged in user"
+      description: ""
+      operationId: "deletePost"
+      parameters:
+        - name: "post"
+          required: true
+          in: "path"
+          schema:
+            type: string
+      responses:
+        404:
+          $ref: "#/components/responses/Post"
+        200:
+          $ref: "#/components/responses/Post"
+  /post/{post}/select:
+    post:
+      tags:
+        - "post"
+      summary: "Mark a post of a logged in user"
+      description: ""
+      operationId: "markPost"
+      parameters:
+        - name: "post"
+          required: true
+          in: "path"
+          schema:
+            type: string
+      responses:
+        400:
+          $ref: "#/components/responses/Post"
+        200:
+          $ref: "#/components/responses/Post"
+  /post/select/clear:
+    post:
+      tags:
+        - "post"
+        summary: "Clear batch delete of a logged in user"
+        description: ""
+        operationId: "clearDelete"
+        requestBody:
+        responses:
+          400:
+            $ref: "#/components/responses/Post"
+          200:
+            $ref: "#/components/responses/Post"
+  /post/{post}/comment:
+    post:
+      tags:
+        - "comment"
+      summary: "Make a comment on a post of a user"
+      description: ""
+      operationId: "makeComment"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Comment"
+      parameters:
+        - name: "post"
+          required: true
+          in: "path"
+          schema:
+            type: string
+      responses:
+        400:
+          $ref: "#/components/responses/Comment"
+        201:
+          $ref: "#/components/responses/Comment"
+    get:
+      tags:
+        - "comment"
+      summary: "Get all comment on a post of a user"
+      description: ""
+      operationId: "getAllComment"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Comment"
+      parameters:
+        - name: "post"
+          required: true
+          in: "path"
+          schema:
+            type: string
+      responses:
+        400:
+          $ref: "#/components/responses/Comment"
+        200:
+          $ref: "#/components/responses/Comment"
+  /post/{post}/like:
+    post:
+      tags:
+        - "like"
+      summary: "Like a post of a user"
+      description: ""
+      operationId: "likePost"
+      parameters:
+        - name: "post"
+          required: true
+          in: "path"
+          schema:
+            type: string
+      responses:
+        400:
+          $ref: "#/components/responses/Like"
+        200:
+          $ref: "#/components/responses/Like"
+security:
+  - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Login:
+      type: "object"
+      properties:
+        identifier:
+          type: "string"
+          format: "string"
+        password:
+          type: "string"
+    User:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        firstName:
+          type: "string"
+        lastName:
+          type: "string"
+        email:
+          type: "string"
+        password:
+          type: "string"
+        username:
+          type: "string"

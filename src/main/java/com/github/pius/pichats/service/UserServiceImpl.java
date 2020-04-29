@@ -28,32 +28,32 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public User searchByUsername(SearchUsernameDto username, HttpServletRequest request) {
+  public User searchByUsername(String username, HttpServletRequest request) {
     String token = jwtProvider.resolveToken(request);
     String identifier = jwtProvider.getIdentifier(token);
     try{
       Optional<User> userByEmail = userRepository.findByEmail(identifier);
       Optional<User> userByUsername = userRepository.findByUsername(identifier);
-      Optional<User> searchedUser = userRepository.findByUsername(username.getUsername());
+      Optional<User> searchedUser = userRepository.findByUsername(username);
       if (!userByEmail.isPresent()){
         if (userByUsername.isPresent()){
           if (searchedUser.isPresent()){
-            if (!userByUsername.get().getUsername().equals(username.getUsername())){
+            if (!userByUsername.get().getUsername().equals(username)){
               return searchedUser.get();
             }
-            throw new CustomException("Luckily!!! : '"+username.getUsername()+"' you just found yourself", HttpStatus.NOT_FOUND);
+            throw new CustomException("Luckily!!! : '"+username+"' you just found yourself", HttpStatus.NOT_FOUND);
           }
-          throw new CustomException("The user : '"+username.getUsername()+"' you are searching for does not exists", HttpStatus.NOT_FOUND);
+          throw new CustomException("The user : '"+username+"' you are searching for does not exists", HttpStatus.NOT_FOUND);
         }
         throw new CustomException("User does not exists", HttpStatus.NOT_FOUND);
       }else{
         if (searchedUser.isPresent()){
-          if (!userByEmail.get().getUsername().equals(username.getUsername())){
+          if (!userByEmail.get().getUsername().equals(username)){
             return searchedUser.get();
           }
-          throw new CustomException("Luckily!!! :'"+username.getUsername()+"' you just found yourself", HttpStatus.NOT_FOUND);
+          throw new CustomException("Luckily!!! :'"+username+"' you just found yourself", HttpStatus.NOT_FOUND);
         }
-        throw new CustomException("The user : '"+username.getUsername()+"' you are searching for does not exists", HttpStatus.NOT_FOUND);
+        throw new CustomException("The user : '"+username+"' you are searching for does not exists", HttpStatus.NOT_FOUND);
       }
     }catch (Exception ex){
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);

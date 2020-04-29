@@ -24,4 +24,7 @@ com:
     cloud_name: ${cloud_name:piusaremieye}
     api_key: ${api_key:475476531299184}
     api_secret: ${api_secret:Y1gJDPyzNDrn1AwMtj8-b15ewlY}
-
+springdoc:
+  swagger-ui:
+    url: /api/v1/swagger-config.yml
+    path: /api-doc

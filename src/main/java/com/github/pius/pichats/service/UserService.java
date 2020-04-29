@@ -7,6 +7,6 @@ import com.github.pius.pichats.model.User;
 import javax.servlet.http.HttpServletRequest;
 
 public interface UserService {
-  User searchByUsername(SearchUsernameDto username, HttpServletRequest request);
+  User searchByUsername(String username, HttpServletRequest request);
   String changePassword(ChangePasswordDTO passwordDTO, HttpServletRequest request);
 }
