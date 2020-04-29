@@ -1,5 +1,6 @@
 package com.github.pius.pichats.security;
 
+import com.github.pius.pichats.exceptions.CustomException;
 import com.github.pius.pichats.model.User;
 import com.github.pius.pichats.repository.UserRepository;
 import io.jsonwebtoken.Claims;
@@ -8,6 +9,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -84,16 +86,17 @@ public class JwtProvider {
     return getAllClaims(token).getExpiration().before(new Date());
   }
 
-  public Optional<User> resolveUser(HttpServletRequest request){
+  public User resolveUser(HttpServletRequest request){
     String token = this.resolveToken(request);
     String identifier = this.getIdentifier(token);
     Optional<User> userByEmail = userRepository.findByEmail(identifier);
     if (!userByEmail.isPresent()){
       Optional<User> userByUsername = userRepository.findByUsername(identifier);
       if (userByUsername.isPresent()){
-        return userByUsername;
+        return userByUsername.get();
       }
+      throw new CustomException("User does not exists", HttpStatus.NOT_FOUND);
     }
-    return userByEmail;
+    return userByEmail.get();
   }
 }

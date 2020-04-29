@@ -3,9 +3,7 @@ package com.github.pius.pichats.service;
 import com.github.pius.pichats.exceptions.CustomException;
 import com.github.pius.pichats.model.Post;
 import com.github.pius.pichats.model.User;
-import com.github.pius.pichats.repository.CommentRepository;
 import com.github.pius.pichats.repository.PostRepository;
-import com.github.pius.pichats.repository.UserRepository;
 import com.github.pius.pichats.security.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,20 +12,17 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PostServiceImpl implements PostService {
   private JwtProvider jwtProvider;
-  private UserRepository userRepository;
   private PostRepository postRepository;
   private CloudService cloudService;
   private List<String> listOfPosts = new ArrayList<>();
 
   @Autowired
-  public PostServiceImpl(JwtProvider jwtProvider, UserRepository userRepository, PostRepository postRepository, CloudService cloudService) {
+  public PostServiceImpl(JwtProvider jwtProvider, PostRepository postRepository, CloudService cloudService) {
     this.jwtProvider = jwtProvider;
-    this.userRepository = userRepository;
     this.postRepository = postRepository;
     this.cloudService = cloudService;
   }
@@ -45,31 +40,15 @@ public class PostServiceImpl implements PostService {
   // a logged in user makes a post
   @Override
   public Post post(Post post, HttpServletRequest request) {
-    String token = jwtProvider.resolveToken(request);
-    String identifier = jwtProvider.getIdentifier(token);
     try{
-      Optional<User> userByEmail = userRepository.findByEmail(identifier);
-      Optional<User> userByUsername = userRepository.findByUsername(identifier);
-      if (!userByEmail.isPresent()){
-        if (userByUsername.isPresent()){
-          Post newPost = new Post();
-          newPost.setCaption(post.getCaption());
-          // upload post if username exists
-          cloudService.upload(post.getPost());
-          newPost.setPost(cloudService.fileName);
-          newPost.setUser(userByUsername.get());
-          return postRepository.save(newPost);
-        }
-        throw new CustomException("User does not exists", HttpStatus.NOT_FOUND);
-      }else{
-        Post newPost = new Post();
-        newPost.setCaption(post.getCaption());
-        // upload post if email exists
-        cloudService.upload(post.getPost());
-        newPost.setPost(cloudService.fileName);
-        newPost.setUser(userByEmail.get());
-        return postRepository.save(newPost);
-      }
+      User user = jwtProvider.resolveUser(request);
+      Post newPost = new Post();
+      newPost.setCaption(post.getCaption());
+      // upload post if username exists
+      cloudService.upload(post.getPost());
+      newPost.setPost(cloudService.fileName);
+      newPost.setUser(user);
+      return postRepository.save(newPost);
     }catch (Exception ex){
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
@@ -78,25 +57,13 @@ public class PostServiceImpl implements PostService {
   // find a particular post of a logged in user
   @Override
   public Post findPost(String post, HttpServletRequest request) {
-    String token = jwtProvider.resolveToken(request);
-    String identifier = jwtProvider.getIdentifier(token);
     try{
-      Optional<User> userByEmail = userRepository.findByEmail(identifier);
-      Optional<User> userByUsername = userRepository.findByUsername(identifier);
+      User user = jwtProvider.resolveUser(request);
       Post postFound = getPost(post);
-      if (!userByEmail.isPresent()){
-        if (userByUsername.isPresent()){
-          if (postFound.getUser().equals(userByUsername.get())){
-            return postFound;
-          }
-          throw new CustomException(identifier+ " does not have post "+post, HttpStatus.NOT_FOUND);
-        }
-        throw new CustomException("User does not exists", HttpStatus.NOT_FOUND);
-      }
-      if (postFound.getUser().equals(userByEmail.get())){
+      if (postFound.getUser().equals(user)){
         return postFound;
       }
-      throw new CustomException(identifier+ " does not have post "+post, HttpStatus.NOT_FOUND);
+      throw new CustomException(user.getUsername()+ " does not have post "+post, HttpStatus.NOT_FOUND);
     }catch (Exception ex){
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
@@ -105,19 +72,9 @@ public class PostServiceImpl implements PostService {
   // return all the post of a logged in user
   @Override
   public List<Post> findAll(HttpServletRequest request) {
-    String token = jwtProvider.resolveToken(request);
-    String identifier = jwtProvider.getIdentifier(token);
     try{
-      Optional<User> userByEmail = userRepository.findByEmail(identifier);
-      Optional<User> userByUsername = userRepository.findByUsername(identifier);
-      if (!userByEmail.isPresent()){
-        if (userByUsername.isPresent()){
-          return postRepository.findAllByUser(userByUsername.get());
-        }
-        throw new CustomException("User does not exists", HttpStatus.NOT_FOUND);
-      }else{
-        return postRepository.findAllByUser(userByEmail.get());
-      }
+      User user = jwtProvider.resolveUser(request);
+      return postRepository.findAllByUser(user);
     }catch (Exception ex){
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
@@ -157,7 +114,6 @@ public class PostServiceImpl implements PostService {
   public String batchDelete(HttpServletRequest request) throws Exception {
     if (!listOfPosts.isEmpty()){
       for (String post : listOfPosts){
-        System.out.println(post);
         delete(post, request);
       }
       listOfPosts.clear();
@@ -168,19 +124,9 @@ public class PostServiceImpl implements PostService {
 
   @Override
   public int countPostsOfUser(HttpServletRequest request) {
-    String token = jwtProvider.resolveToken(request);
-    String identifier = jwtProvider.getIdentifier(token);
     try{
-      Optional<User> userByEmail = userRepository.findByEmail(identifier);
-      Optional<User> userByUsername = userRepository.findByUsername(identifier);
-      if (!userByEmail.isPresent()){
-        if (userByUsername.isPresent()){
-          return postRepository.countPostsByUser(userByUsername.get());
-        }
-        throw new CustomException("User does not exists", HttpStatus.NOT_FOUND);
-      }else{
-        return postRepository.countPostsByUser(userByUsername.get());
-      }
+      User user = jwtProvider.resolveUser(request);
+      return postRepository.countPostsByUser(user);
     }catch (Exception ex){
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }

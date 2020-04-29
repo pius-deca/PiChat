@@ -50,21 +50,4 @@ public class CommentController {
     response.setMessage("All comments have been counted for post of id : "+post);
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
-//
-//  @GetMapping()
-//  public ResponseEntity<ApiResponse<List<Post>>> getAllPosts(HttpServletRequest request){
-//    List<Post> posts = postService.findAll(request);
-//    ApiResponse<List<Post>> response = new ApiResponse<>(HttpStatus.OK);
-//    response.setData(posts);
-//    response.setMessage("All posts have been retrieved");
-//    return new ResponseEntity<>(response, HttpStatus.OK);
-//  }
-
-//  @DeleteMapping("/{post}")
-//  public ResponseEntity<ApiResponse<String>> deleteAPost(@PathVariable(name = "post") String post, HttpServletRequest request) throws Exception {
-//    postService.delete(post, request);
-//    ApiResponse<String> response = new ApiResponse<>(HttpStatus.OK);
-//    response.setMessage("Post have been deleted");
-//    return new ResponseEntity<>(response, HttpStatus.OK);
-//  }
 }

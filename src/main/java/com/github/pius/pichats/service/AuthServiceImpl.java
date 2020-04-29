@@ -53,7 +53,6 @@ public class AuthServiceImpl implements AuthService {
   public LoginResponseDTO login(LoginRequestDTO user) {
     String identifier = user.getIdentifier();
     String password = user.getPassword();
-
     try{
       authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
         identifier, password

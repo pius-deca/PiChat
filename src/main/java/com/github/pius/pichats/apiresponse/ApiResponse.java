@@ -1,6 +1,7 @@
 package com.github.pius.pichats.apiresponse;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
 import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
@@ -15,6 +16,8 @@ import java.util.Set;
 /**
  * ApiResponse
  */
+
+@Data
 public class ApiResponse<T> {
 
   private HttpStatus status;
@@ -95,61 +98,4 @@ public class ApiResponse<T> {
   public void addValidationErrors(Set<ConstraintViolation<?>> constraintViolations) {
     constraintViolations.forEach(this::addValidationError);
   }
-
-  public HttpStatus getStatus() {
-    return status;
-  }
-
-  public void setStatus(HttpStatus status) {
-    this.status = status;
-  }
-
-  public String getMessage() {
-    return message;
-  }
-
-  public void setMessage(String message) {
-    this.message = message;
-  }
-
-  public String getError() {
-    return error;
-  }
-
-  public void setError(String error) {
-    this.error = error;
-  }
-
-  public LocalDateTime getTimestamp() {
-    return timestamp;
-  }
-
-  public void setTimestamp(LocalDateTime timestamp) {
-    this.timestamp = timestamp;
-  }
-
-  public String getDebugMessage() {
-    return debugMessage;
-  }
-
-  public void setDebugMessage(String debugMessage) {
-    this.debugMessage = debugMessage;
-  }
-
-  public List<ApiSubError> getSubErrors() {
-    return subErrors;
-  }
-
-  public void setSubErrors(List<ApiSubError> subErrors) {
-    this.subErrors = subErrors;
-  }
-
-  public T getData() {
-    return data;
-  }
-
-  public void setData(T data) {
-    this.data = data;
-  }
-
 }
