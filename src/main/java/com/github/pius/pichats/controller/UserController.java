@@ -7,6 +7,7 @@ import com.github.pius.pichats.model.Follow;
 import com.github.pius.pichats.model.ProfilePic;
 import com.github.pius.pichats.model.User;
 import com.github.pius.pichats.service.BioService;
+import com.github.pius.pichats.service.FollowService;
 import com.github.pius.pichats.service.ProfileService;
 import com.github.pius.pichats.service.UserService;
 import org.modelmapper.ModelMapper;
@@ -24,13 +25,15 @@ public class UserController {
   private UserService userService;
   private BioService bioService;
   private ProfileService profileService;
+  private FollowService followService;
   private ModelMapper modelMapper;
 
   @Autowired
-  public UserController(UserService userService, BioService bioService, ProfileService profileService, ModelMapper modelMapper) {
+  public UserController(UserService userService, BioService bioService, ProfileService profileService, FollowService followService, ModelMapper modelMapper) {
     this.userService = userService;
     this.bioService = bioService;
     this.profileService = profileService;
+    this.followService = followService;
     this.modelMapper = modelMapper;
   }
 
@@ -80,7 +83,7 @@ public class UserController {
 
   @PostMapping("/{username}/follow")
   public ResponseEntity<ApiResponse<Follow>> follow(@PathVariable(name = "username") String username, HttpServletRequest request){
-    Follow follow = userService.follow(username, request);
+    Follow follow = followService.follow(username, request);
     ApiResponse<Follow> response = new ApiResponse<>(HttpStatus.OK);
     response.setData(follow);
     response.setMessage("User has followed '"+username+"' successfully");
@@ -89,7 +92,7 @@ public class UserController {
 
   @PostMapping("/{username}/unfollow")
   public ResponseEntity<ApiResponse<String>> unFollow(@PathVariable(name = "username") String username, HttpServletRequest request){
-    String message = userService.unFollow(username, request);
+    String message = followService.unFollow(username, request);
     ApiResponse<String> response = new ApiResponse<>(HttpStatus.OK);
     response.setMessage(message);
     return new ResponseEntity<>(response, HttpStatus.OK);
@@ -97,7 +100,7 @@ public class UserController {
 
   @PostMapping("/followers")
   public ResponseEntity<ApiResponse<Integer>> followers(HttpServletRequest request){
-    int numOfFollowers = userService.countFollowers(request);
+    int numOfFollowers = followService.countFollowers(request);
     ApiResponse<Integer> response = new ApiResponse<>(HttpStatus.OK);
     response.setData(numOfFollowers);
     return new ResponseEntity<>(response, HttpStatus.OK);
@@ -105,7 +108,7 @@ public class UserController {
 
   @PostMapping("/following")
   public ResponseEntity<ApiResponse<Integer>> following(HttpServletRequest request){
-    int numOfFollowing = userService.countFollowing(request);
+    int numOfFollowing = followService.countFollowing(request);
     ApiResponse<Integer> response = new ApiResponse<>(HttpStatus.OK);
     response.setData(numOfFollowing);
     return new ResponseEntity<>(response, HttpStatus.OK);
