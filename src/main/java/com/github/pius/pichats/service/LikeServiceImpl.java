@@ -38,7 +38,7 @@ public class LikeServiceImpl implements LikeService {
       Post postFound = postService.getPost(post);
       Like newLike = new Like();
       Optional<Like> foundLike = likeRepository.findByPost(postFound);
-      return saveLike(user, postFound, newLike, foundLike);
+      return this.saveLike(user, postFound, newLike, foundLike);
     }catch (Exception ex){
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }

@@ -28,7 +28,7 @@ public class BioServiceImpl implements BioService {
     try{
       User user = jwtProvider.resolveUser(request);
       Bio newBio = new Bio();
-      return saveBio(bio, user, newBio);
+      return this.saveBio(bio, user, newBio);
     }catch (Exception ex){
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }

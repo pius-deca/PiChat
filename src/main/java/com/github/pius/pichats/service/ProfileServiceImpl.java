@@ -56,7 +56,7 @@ public class ProfileServiceImpl implements ProfileService{
       ProfilePic profile = new ProfilePic();
       Optional<ProfilePic> profilePic = profileRepository.findByUser(user);
       // upload post if username exists
-      cloudService.upload(pictureFormat(pic.getProfilePic()));
+      cloudService.upload(this.pictureFormat(pic.getProfilePic()));
       if (profilePic.isPresent()){
         // delete the previous profile before uploading a new one
         cloudService.deleteFile(profilePic.get().getProfilePic());
@@ -76,7 +76,7 @@ public class ProfileServiceImpl implements ProfileService{
   public ProfilePic find(String pic, HttpServletRequest request) {
     try{
       User user = jwtProvider.resolveUser(request);
-      ProfilePic profile = getProfile(pic);
+      ProfilePic profile = this.getProfile(pic);
       if (profile.getUser().equals(user)){
         return profile;
       }
@@ -90,6 +90,6 @@ public class ProfileServiceImpl implements ProfileService{
   @Override
   public void delete(String profile, HttpServletRequest request) throws Exception {
     cloudService.deleteFile(profile);
-    profileRepository.delete(find(profile, request));
+    profileRepository.delete(this.find(profile, request));
   }
 }

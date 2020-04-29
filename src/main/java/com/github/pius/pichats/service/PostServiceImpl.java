@@ -59,7 +59,7 @@ public class PostServiceImpl implements PostService {
   public Post findPost(String post, HttpServletRequest request) {
     try{
       User user = jwtProvider.resolveUser(request);
-      Post postFound = getPost(post);
+      Post postFound = this.getPost(post);
       if (postFound.getUser().equals(user)){
         return postFound;
       }
@@ -84,13 +84,13 @@ public class PostServiceImpl implements PostService {
   @Override
   public void delete(String post, HttpServletRequest request) throws Exception {
     cloudService.deleteFile(post);
-    postRepository.delete(findPost(post, request));
+    postRepository.delete(this.findPost(post, request));
   }
 
   // find a post of the logged in user mark put in a list
   @Override
   public String selectPostToDelete(String post, HttpServletRequest request){
-    Post postFound = findPost(post, request);
+    Post postFound = this.findPost(post, request);
     if (!listOfPosts.contains(postFound.getPost())){
       listOfPosts.add(postFound.getPost());
       return "Post : "+post+" have been marked";

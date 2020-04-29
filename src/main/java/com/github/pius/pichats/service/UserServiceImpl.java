@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
   public String changePassword(ChangePasswordDTO passwordDTO, HttpServletRequest request) {
     try{
       User user = jwtProvider.resolveUser(request);
-      return newPassword(passwordDTO, user);
+      return this.newPassword(passwordDTO, user);
     }catch (Exception ex){
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
