@@ -49,4 +49,8 @@ public class User extends GeneralBaseEntity{
   @OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, mappedBy = "user", orphanRemoval = true)
   @JsonIgnore
   private Bio bio;
+
+  @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, mappedBy = "user", orphanRemoval = true)
+  @JsonIgnore
+  private List<Follow> followers;
 }

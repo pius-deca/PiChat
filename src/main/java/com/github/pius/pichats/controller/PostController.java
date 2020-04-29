@@ -82,4 +82,13 @@ public class PostController {
     response.setMessage(message);
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
+
+  @GetMapping("/count")
+  public ResponseEntity<ApiResponse<Integer>> countPosts(HttpServletRequest request){
+    int numOfLikes = postService.countPostsOfUser(request);
+    ApiResponse<Integer> response = new ApiResponse<>(HttpStatus.OK);
+    response.setData(numOfLikes);
+    response.setMessage("All posts have been counted");
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
 }

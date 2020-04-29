@@ -14,4 +14,5 @@ public interface PostService {
   String selectPostToDelete(String post, HttpServletRequest request);
   String clearBatchDelete(HttpServletRequest request);
   String batchDelete(HttpServletRequest request) throws Exception;
+  int countPostsOfUser(HttpServletRequest request);
 }

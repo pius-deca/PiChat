@@ -26,4 +26,13 @@ public class LikeController {
     response.setMessage("A post has been liked by a user");
     return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
+
+  @GetMapping("/post/{postId}/likes/count")
+  public ResponseEntity<ApiResponse<Integer>> countLikes(@PathVariable(name = "postId") String post, HttpServletRequest request){
+    int numOfLikes = likeService.countPostLikes(post, request);
+    ApiResponse<Integer> response = new ApiResponse<>(HttpStatus.OK);
+    response.setData(numOfLikes);
+    response.setMessage("All likes have been counted for post of id : "+post);
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
 }

@@ -6,5 +6,5 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface LikeService {
   Like likeOrUnlike(String post, HttpServletRequest request);
-
+  int countPostLikes(String post, HttpServletRequest request);
 }

@@ -55,6 +55,19 @@ public class LikeServiceImpl implements LikeService {
     }
   }
 
+  @Override
+  public int countPostLikes(String post, HttpServletRequest request) {
+    Post postFound = postService.findPost(post, request);
+    Optional<Like> like = likeRepository.findByPost(postFound);
+    int numOfLikes = 0;
+    if (like.isPresent()){
+      if (like.get().isLikes()){
+        numOfLikes = likeRepository.countLikesByPost(postFound);
+      }
+    }
+    return numOfLikes;
+  }
+
   // this method likes or unlikes
   private Like saveLike(Optional<User> identifier, Post postFound, Like newLike, Optional<Like> foundLike) {
     if (foundLike.isPresent()){

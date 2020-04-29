@@ -3,6 +3,7 @@ package com.github.pius.pichats.controller;
 import com.github.pius.pichats.apiresponse.ApiResponse;
 import com.github.pius.pichats.dto.*;
 import com.github.pius.pichats.model.Bio;
+import com.github.pius.pichats.model.Follow;
 import com.github.pius.pichats.model.ProfilePic;
 import com.github.pius.pichats.model.User;
 import com.github.pius.pichats.service.BioService;
@@ -74,6 +75,15 @@ public class UserController {
     ApiResponse<User> response = new ApiResponse<>(HttpStatus.OK);
     response.setData(searchUser);
     response.setMessage("The user searched for retrieved successfully");
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  @PostMapping("/{username}/follow")
+  public ResponseEntity<ApiResponse<Follow>> follow(@PathVariable(name = "username") String username, HttpServletRequest request){
+    Follow follow = userService.follow(username, request);
+    ApiResponse<Follow> response = new ApiResponse<>(HttpStatus.OK);
+    response.setData(follow);
+    response.setMessage("User has followed '"+username+"' successfully");
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 

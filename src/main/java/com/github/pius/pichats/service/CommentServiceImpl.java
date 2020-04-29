@@ -66,4 +66,10 @@ public class CommentServiceImpl implements CommentService {
   public List<Comment> getAllCommentsForAPost(String post, HttpServletRequest request) {
     return commentRepository.findByPost(postService.findPost(post, request));
   }
+
+  @Override
+  public int countPostComments(String post, HttpServletRequest request) {
+    Post postFound = postService.findPost(post, request);
+    return commentRepository.countCommentsByPost(postFound);
+  }
 }

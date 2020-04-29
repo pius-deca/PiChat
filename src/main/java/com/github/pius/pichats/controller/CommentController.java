@@ -41,6 +41,15 @@ public class CommentController {
     response.setMessage("All comments have been retrieved for post of id : "+post);
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
+
+  @GetMapping("/post/{postId}/comments/count")
+  public ResponseEntity<ApiResponse<Integer>> countComments(@PathVariable(name = "postId") String post, HttpServletRequest request){
+    int numOfComments = commentService.countPostComments(post, request);
+    ApiResponse<Integer> response = new ApiResponse<>(HttpStatus.OK);
+    response.setData(numOfComments);
+    response.setMessage("All comments have been counted for post of id : "+post);
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
 //
 //  @GetMapping()
 //  public ResponseEntity<ApiResponse<List<Post>>> getAllPosts(HttpServletRequest request){

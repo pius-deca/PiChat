@@ -3,6 +3,7 @@ package com.github.pius.pichats.service;
 import com.github.pius.pichats.exceptions.CustomException;
 import com.github.pius.pichats.model.Post;
 import com.github.pius.pichats.model.User;
+import com.github.pius.pichats.repository.CommentRepository;
 import com.github.pius.pichats.repository.PostRepository;
 import com.github.pius.pichats.repository.UserRepository;
 import com.github.pius.pichats.security.JwtProvider;
@@ -163,6 +164,26 @@ public class PostServiceImpl implements PostService {
       return "Posts marked have been deleted";
     }
     return "There is no post(s) marked to delete";
+  }
+
+  @Override
+  public int countPostsOfUser(HttpServletRequest request) {
+    String token = jwtProvider.resolveToken(request);
+    String identifier = jwtProvider.getIdentifier(token);
+    try{
+      Optional<User> userByEmail = userRepository.findByEmail(identifier);
+      Optional<User> userByUsername = userRepository.findByUsername(identifier);
+      if (!userByEmail.isPresent()){
+        if (userByUsername.isPresent()){
+          return postRepository.countPostsByUser(userByUsername.get());
+        }
+        throw new CustomException("User does not exists", HttpStatus.NOT_FOUND);
+      }else{
+        return postRepository.countPostsByUser(userByUsername.get());
+      }
+    }catch (Exception ex){
+      throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
   }
 
 }
