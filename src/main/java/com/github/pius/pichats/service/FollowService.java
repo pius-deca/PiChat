@@ -6,6 +6,8 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface FollowService {
   Follow follow(String username, HttpServletRequest request);
+  Follow acceptRequest(String username, HttpServletRequest request);
+  String declineRequest(String username, HttpServletRequest request);
   String unFollow(String username, HttpServletRequest request);
   int countFollowers(HttpServletRequest request);
   int countFollowing(HttpServletRequest request);

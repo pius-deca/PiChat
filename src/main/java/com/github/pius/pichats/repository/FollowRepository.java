@@ -8,6 +8,7 @@ import java.util.Optional;
 
 public interface FollowRepository extends JpaRepository<Follow, Long> {
   Optional<Follow> findByFollowing(String username);
-  int countFollowingByUser(User user);
-  int countFollowersByFollowing(String user);
+  Optional<Follow> findByUser(User user);
+  int countFollowingByUserAndAccepted(User user, boolean accepted);
+  int countFollowersByFollowingAndAccepted(String following, boolean accepted);
 }

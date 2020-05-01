@@ -37,7 +37,43 @@ public class FollowServiceImpl implements FollowService {
         follow.setUser(user);
         return followRepository.save(follow);
       }
-      throw new CustomException("User '"+username+"' has already been followed", HttpStatus.NOT_FOUND);
+      if (following.get().isAccepted()){
+        throw new CustomException("User '"+username+"' has already been followed", HttpStatus.NOT_FOUND);
+      }else{
+        throw new CustomException("User '"+user.getUsername()+"' has sent a request to follow '"+username+"'", HttpStatus.NOT_FOUND);
+      }
+    }catch (Exception ex){
+      throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+  }
+
+  @Override
+  public Follow acceptRequest(String username, HttpServletRequest request) {
+    try{
+      jwtProvider.resolveUser(request);
+      User foundRequester = userService.searchByUsername(username, request);
+      Optional<Follow> following = followRepository.findByUser(foundRequester);
+      if (following.isPresent()){
+        following.get().setAccepted(true);
+        return followRepository.save(following.get());
+      }
+      throw new CustomException("User '"+username+"' did not make any request to follow you", HttpStatus.NOT_FOUND);
+    }catch (Exception ex){
+      throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+  }
+
+  @Override
+  public String declineRequest(String username, HttpServletRequest request) {
+    try{
+      User user = jwtProvider.resolveUser(request);
+      User foundRequester = userService.searchByUsername(username, request);
+      Optional<Follow> following = followRepository.findByUser(foundRequester);
+      if (following.isPresent()){
+        followRepository.delete(following.get());
+        return "User '"+user.getUsername()+"' declines '"+username+"' request";
+      }
+      throw new CustomException("User '"+username+"' did not make any request to follow you", HttpStatus.NOT_FOUND);
     }catch (Exception ex){
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
@@ -46,14 +82,14 @@ public class FollowServiceImpl implements FollowService {
   @Override
   public String unFollow(String username, HttpServletRequest request) {
     try{
-      jwtProvider.resolveUser(request);
+      User user = jwtProvider.resolveUser(request);
       userService.searchByUsername(username, request);
       Optional<Follow> following = followRepository.findByFollowing(username);
       if(following.isPresent()){
         followRepository.delete(following.get());
-        return "User has unfollowed '"+username+"' successfully";
+        return "User '"+user.getUsername()+"' has unfollowed '"+username+"' successfully";
       }
-      throw new CustomException("User '"+username+"' has already been unfollowed", HttpStatus.NOT_FOUND);
+      throw new CustomException("User '"+user.getUsername()+"' has already unfollowed '"+username+"'", HttpStatus.NOT_FOUND);
     }catch (Exception ex){
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
@@ -63,7 +99,7 @@ public class FollowServiceImpl implements FollowService {
   public int countFollowers(HttpServletRequest request){
     try{
       User user = jwtProvider.resolveUser(request);
-      return followRepository.countFollowersByFollowing(user.getUsername());
+      return followRepository.countFollowersByFollowingAndAccepted(user.getUsername(), true);
     }catch (Exception ex){
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
@@ -73,7 +109,7 @@ public class FollowServiceImpl implements FollowService {
   public int countFollowing(HttpServletRequest request){
     try{
       User user = jwtProvider.resolveUser(request);
-      return followRepository.countFollowingByUser(user);
+      return followRepository.countFollowingByUserAndAccepted(user, true);
     }catch (Exception ex){
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }

@@ -16,6 +16,9 @@ public class Follow extends GeneralBaseEntity{
 
   private String following;
 
+  @Column(columnDefinition = "boolean default false", nullable = false)
+  private boolean accepted;
+
   @ManyToOne
   @JoinColumn(name = "user_id")
   private User user;

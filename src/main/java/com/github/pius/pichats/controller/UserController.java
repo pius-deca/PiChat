@@ -86,7 +86,24 @@ public class UserController {
     Follow follow = followService.follow(username, request);
     ApiResponse<Follow> response = new ApiResponse<>(HttpStatus.OK);
     response.setData(follow);
-    response.setMessage("User has followed '"+username+"' successfully");
+    response.setMessage("User has sent a request to follow '"+username+"'");
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  @PostMapping("/{username}/follow/accept")
+  public ResponseEntity<ApiResponse<Follow>> acceptRequest(@PathVariable(name = "username") String username, HttpServletRequest request){
+    Follow follow = followService.acceptRequest(username, request);
+    ApiResponse<Follow> response = new ApiResponse<>(HttpStatus.OK);
+    response.setData(follow);
+    response.setMessage("User has accepted '"+username+"' request");
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  @PostMapping("/{username}/follow/decline")
+  public ResponseEntity<ApiResponse<String>> declineRequest(@PathVariable(name = "username") String username, HttpServletRequest request){
+    String message = followService.declineRequest(username, request);
+    ApiResponse<String> response = new ApiResponse<>(HttpStatus.OK);
+    response.setMessage(message);
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
