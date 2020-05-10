@@ -5,9 +5,13 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+
+import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -32,14 +36,4 @@ public class BioTest {
     assertEquals(bio.getPhone(), "0810987654");
   }
 
-//  @Test
-//  @Order(2)
-//  @DisplayName("test if user is null")
-//  void ifUserOfBioIsNUll() {
-//    bio.setId(3L);
-//    bio.setPhone("0810987654");
-//
-//    Set<ConstraintViolation<AgeRange>> violations = validator.validate(ageRange);
-//    assertEquals(violations.size(), 1);
-//  }
 }
