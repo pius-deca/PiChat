@@ -6,6 +6,7 @@ import com.github.pius.pichats.model.User;
 import com.github.pius.pichats.repository.FollowRepository;
 import com.github.pius.pichats.security.JwtProvider;
 import com.github.pius.pichats.service.FollowService;
+import com.github.pius.pichats.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
