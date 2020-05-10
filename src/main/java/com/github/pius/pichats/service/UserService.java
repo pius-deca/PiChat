@@ -1,7 +1,6 @@
 package com.github.pius.pichats.service;
 
 import com.github.pius.pichats.dto.ChangePasswordDTO;
-import com.github.pius.pichats.model.Follow;
 import com.github.pius.pichats.model.User;
 
 import javax.servlet.http.HttpServletRequest;

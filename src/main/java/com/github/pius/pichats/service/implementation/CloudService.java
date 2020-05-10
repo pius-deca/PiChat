@@ -1,4 +1,4 @@
-package com.github.pius.pichats.service;
+package com.github.pius.pichats.service.implementation;
 
 import com.cloudinary.utils.ObjectUtils;
 import com.github.pius.pichats.configuration.CloudConfiguration;

@@ -1,10 +1,11 @@
-package com.github.pius.pichats.service;
+package com.github.pius.pichats.service.implementation;
 
 import com.github.pius.pichats.exceptions.CustomException;
 import com.github.pius.pichats.model.ProfilePic;
 import com.github.pius.pichats.model.User;
 import com.github.pius.pichats.repository.ProfileRepository;
 import com.github.pius.pichats.security.JwtProvider;
+import com.github.pius.pichats.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 @Service
-public class ProfileServiceImpl implements ProfileService{
+public class ProfileServiceImpl implements ProfileService {
 
   private JwtProvider jwtProvider;
   private ProfileRepository profileRepository;

@@ -1,10 +1,11 @@
-package com.github.pius.pichats.service;
+package com.github.pius.pichats.service.implementation;
 
 import com.github.pius.pichats.exceptions.CustomException;
 import com.github.pius.pichats.model.Post;
 import com.github.pius.pichats.model.User;
 import com.github.pius.pichats.repository.PostRepository;
 import com.github.pius.pichats.security.JwtProvider;
+import com.github.pius.pichats.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -74,7 +75,7 @@ public class PostServiceImpl implements PostService {
   public List<Post> findAll(HttpServletRequest request) {
     try{
       User user = jwtProvider.resolveUser(request);
-      return postRepository.findAllByUser(user);
+      return postRepository.findAllByUserOrderByCreatedAt(user);
     }catch (Exception ex){
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }

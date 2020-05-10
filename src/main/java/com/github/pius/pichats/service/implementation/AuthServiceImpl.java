@@ -1,4 +1,4 @@
-package com.github.pius.pichats.service;
+package com.github.pius.pichats.service.implementation;
 
 import com.github.pius.pichats.dto.LoginRequestDTO;
 import com.github.pius.pichats.dto.LoginResponseDTO;
@@ -6,6 +6,7 @@ import com.github.pius.pichats.exceptions.CustomException;
 import com.github.pius.pichats.model.User;
 import com.github.pius.pichats.repository.UserRepository;
 import com.github.pius.pichats.security.JwtProvider;
+import com.github.pius.pichats.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
