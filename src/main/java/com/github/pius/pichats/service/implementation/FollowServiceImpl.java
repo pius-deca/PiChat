@@ -5,6 +5,7 @@ import com.github.pius.pichats.model.Follow;
 import com.github.pius.pichats.model.User;
 import com.github.pius.pichats.repository.FollowRepository;
 import com.github.pius.pichats.security.JwtProvider;
+import com.github.pius.pichats.service.UserService;
 import com.github.pius.pichats.service.FollowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
