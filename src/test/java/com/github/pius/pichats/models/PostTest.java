@@ -50,7 +50,7 @@ public class PostTest {
   }
 
   @Test
-  @Order(1)
+  @Order(2)
   @DisplayName("test if post is null")
   void ifPostIsNUll() {
     post.setId(3L);
