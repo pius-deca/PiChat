@@ -1,6 +1,5 @@
 package com.github.pius.pichats.models;
 
-import com.github.pius.pichats.model.Bio;
 import com.github.pius.pichats.model.Post;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
