@@ -6,18 +6,14 @@ spring:
   jpa:
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
+        dialect: org.hibernate.dialect.PostgreSQLDialect
         ddl-auto: update
-        jdbc:
-          lob:
-            non_contextual_creation: true
-    generate-ddl: true
   datasource:
-    url: jdbc:h2:mem:testdb
+    url: ${DATABASE_URL:jdbc:postgresql://${DB_HOST:localhost}:5432/pichat}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
     password: ${SPRING_DATASOURCE_PASSWORD:1996}
     initialization-mode: always
-    driverClassName: org.h2.Driver
+    driverClassName: org.postgresql.Driver
     continue-on-error: true
 com:
   cloudinary:
