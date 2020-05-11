@@ -19,6 +19,7 @@ public class SignupRequestDTO {
   private String lastName;
 
   @Email(message = "Email should be valid")
+  @NotBlank(message = "Please provide an email")
   private String email;
 
   @NotBlank(message = "Please provide a username")

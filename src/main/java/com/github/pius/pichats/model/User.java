@@ -27,6 +27,7 @@ public class User extends GeneralBaseEntity{
   private String lastName;
 
   @Email(message = "Email should be valid")
+  @NotBlank(message = "Please provide an email")
   @Column(nullable = false)
   private String email;
 
