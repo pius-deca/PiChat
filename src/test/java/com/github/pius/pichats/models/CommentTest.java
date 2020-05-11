@@ -17,7 +17,6 @@ import javax.validation.ValidatorFactory;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CommentTest {
   private final static Comment comment = new Comment();

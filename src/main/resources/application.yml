@@ -8,6 +8,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         ddl-auto: update
+    generate-ddl: true
   datasource:
     url: ${DATABASE_URL:jdbc:postgresql://${DB_HOST:localhost}:5432/pichat}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
