@@ -22,5 +22,5 @@ com:
     api_secret: ${api_secret:Y1gJDPyzNDrn1AwMtj8-b15ewlY}
 springdoc:
   swagger-ui:
-    url: /api/v1/swagger-config.yml
+    url: /api/v1/swagger-config.yaml
     path: /api-doc
