@@ -15,9 +15,11 @@ import javax.validation.constraints.NotBlank;
 @Entity(name = "profiles")
 public class ProfilePic extends GeneralBaseEntity{
 
-  @NotBlank(message = "Please provide a post")
+  @NotBlank(message = "Please provide a picture")
   @Column(name = "profile_pic")
   private String profilePic;
+
+  private String url;
 
   @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")

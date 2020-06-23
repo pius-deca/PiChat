@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping
+@CrossOrigin
 public class LikeController {
   private LikeService likeService;
 

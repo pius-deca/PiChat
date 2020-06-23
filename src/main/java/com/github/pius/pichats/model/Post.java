@@ -22,6 +22,8 @@ public class Post extends GeneralBaseEntity{
   @NotBlank(message = "Please provide a post")
   private String post;
 
+  private String url;
+
   @ManyToOne
   @JoinColumn(name = "user_id")
   private User user;

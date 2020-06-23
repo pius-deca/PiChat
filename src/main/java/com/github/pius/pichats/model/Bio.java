@@ -5,10 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.util.Date;
 
 @EqualsAndHashCode(callSuper = true)
@@ -20,6 +17,7 @@ public class Bio extends GeneralBaseEntity {
 
   private String description;
   private String phone;
+  private String gender;
   private Date dob;
   private String address;
   private String country;

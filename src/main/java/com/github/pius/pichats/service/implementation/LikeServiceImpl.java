@@ -5,7 +5,6 @@ import com.github.pius.pichats.model.Like;
 import com.github.pius.pichats.model.Post;
 import com.github.pius.pichats.model.User;
 import com.github.pius.pichats.repository.LikeRepository;
-import com.github.pius.pichats.repository.UserRepository;
 import com.github.pius.pichats.security.JwtProvider;
 import com.github.pius.pichats.service.LikeService;
 import com.github.pius.pichats.service.PostService;
@@ -19,28 +18,32 @@ import java.util.Optional;
 @Service
 public class LikeServiceImpl implements LikeService {
   private LikeRepository likeRepository;
-  private UserRepository userRepository;
   private JwtProvider jwtProvider;
   private PostService postService;
+  private AuthServiceImpl authServiceImpl;
 
   @Autowired
-  public LikeServiceImpl(LikeRepository likeRepository, UserRepository userRepository, JwtProvider jwtProvider, PostService postService) {
+  public LikeServiceImpl(LikeRepository likeRepository, JwtProvider jwtProvider, PostService postService, AuthServiceImpl authServiceImpl) {
     this.likeRepository = likeRepository;
-    this.userRepository = userRepository;
     this.jwtProvider = jwtProvider;
     this.postService = postService;
+    this.authServiceImpl = authServiceImpl;
   }
 
   // this method enables a user likes or unlikes a post made by any user
   @Override
   public Like likeOrUnlike(String post, HttpServletRequest request) {
     try{
+      authServiceImpl.isAccountActive(request);
       User user = jwtProvider.resolveUser(request);
-      // find any post to like
-      Post postFound = postService.getPost(post);
-      Like newLike = new Like();
-      Optional<Like> foundLike = likeRepository.findByPost(postFound);
-      return this.saveLike(user, postFound, newLike, foundLike);
+      if (user.isActive()){
+        // find any post to like
+        Post postFound = postService.getPost(post);
+        Like newLike = new Like();
+        Optional<Like> foundLike = likeRepository.findByPost(postFound);
+        return this.saveLike(user, postFound, newLike, foundLike);
+      }
+      throw new CustomException("Your account is yet to be activated", HttpStatus.UNAUTHORIZED);
     }catch (Exception ex){
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
@@ -64,6 +67,7 @@ public class LikeServiceImpl implements LikeService {
 
   @Override
   public int countPostLikes(String post, HttpServletRequest request) {
+//    authServiceImpl.isAccountActive(request);
     Post postFound = postService.findPost(post, request);
     Optional<Like> like = likeRepository.findByPost(postFound);
     int numOfLikes = 0;

@@ -4,10 +4,11 @@ server:
     context-path: /api/v1
 spring:
   jpa:
+    hibernate:
+      ddl-auto: create-drop
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        ddl-auto: update
   datasource:
     url: ${DATABASE_URL:jdbc:postgresql://${DB_HOST:localhost}:5432/pichat}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
@@ -15,6 +16,13 @@ spring:
     initialization-mode: always
     driverClassName: org.postgresql.Driver
     continue-on-error: true
+
+  mail:
+    properties:
+      mail:
+        smtp:
+          username: ${HAIRX_MAIL:mypichatapp@gmail.com}
+          password: ${HAIRX_MAIL_PASSWORD:pichat1996}
 com:
   cloudinary:
     cloud_name: ${cloud_name:piusaremieye}

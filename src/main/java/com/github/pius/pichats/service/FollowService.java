@@ -11,4 +11,6 @@ public interface FollowService {
   String unFollow(String username, HttpServletRequest request);
   int countFollowers(HttpServletRequest request);
   int countFollowing(HttpServletRequest request);
+  int countFollowingSearchedUser(String username, HttpServletRequest request);
+  int countFollowersOfSearchedUser(String username, HttpServletRequest request);
 }

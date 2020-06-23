@@ -1,0 +1,27 @@
+server:
+  port: ${PORT:8088}
+
+spring.profiles.active: test
+
+spring:
+  jpa:
+    database: h2
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1
+    username: sa
+    password: sa
+    # data:
+    # - classpath:/data-test.sql
+  h2:
+    console:
+      enabled: true
+  hibernate:
+    dialect: org.hibernate.dialect.H2Dialect
+    ddl-auto: create-drop
+
+com:
+  cloudinary:
+    cloud_name: ${cloud_name:piusaremieye}
+    api_key: ${api_key:475476531299184}
+    api_secret: ${api_secret:Y1gJDPyzNDrn1AwMtj8-b15ewlY}
