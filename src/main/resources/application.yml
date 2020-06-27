@@ -3,11 +3,6 @@ server:
   servlet:
     context-path: /api/v1
 spring:
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-    properties:
-      dialect: org.hibernate.dialect.PostgreSQLDialect
   datasource:
     url: ${DATABASE_URL:jdbc:postgresql://${DB_HOST:localhost}:5432/pichat}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
@@ -15,6 +10,11 @@ spring:
     initialization-mode: always
     driverClassName: org.postgresql.Driver
     continue-on-error: true
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      dialect: org.hibernate.dialect.PostgreSQLDialect
 
   mail:
     properties:
