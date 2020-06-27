@@ -1,5 +1,6 @@
 package com.github.pius.pichats.configuration;
 
+import com.github.pius.pichats.security.JwtFilter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

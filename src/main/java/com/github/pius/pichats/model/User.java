@@ -17,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "users")
-public class User extends GeneralBaseEntity{
+public class User extends GeneralBaseEntity {
 
   @NotBlank(message = "Please provide first name")
   @Column(nullable = false, name = "first_name")

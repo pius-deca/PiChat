@@ -14,8 +14,12 @@ import java.util.Optional;
 @Service
 public class MyUserDetails implements UserDetailsService {
 
-  @Autowired
   private UserRepository userRepository;
+
+  @Autowired
+  public MyUserDetails(UserRepository userRepository) {
+    this.userRepository = userRepository;
+  }
 
   private UserDetails GetDetails(String identifier, String password, String role) {
     return org.springframework.security.core.userdetails.User.withUsername(identifier).password(password)

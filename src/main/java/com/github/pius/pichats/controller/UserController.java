@@ -170,11 +170,11 @@ public class UserController {
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
-  @PatchMapping("/update")
-  public ResponseEntity<ApiResponse<UpdateResponseDTO>> updateUser(@Valid @RequestBody UpdateResponseDTO updateResponseDTO, HttpServletRequest request){
-    UpdateResponseDTO updatedUser = userService.updateUser(updateResponseDTO, request);
+  @PatchMapping("/update_account")
+  public ResponseEntity<ApiResponse<UpdateResponseDTO>> updateUser(@Valid @RequestBody UpdateRequestDTO updateRequestDTO, HttpServletRequest request){
+    UpdateResponseDTO updatedUser = userService.updateUser(updateRequestDTO, request);
     ApiResponse<UpdateResponseDTO> response = new ApiResponse<>(HttpStatus.OK);
-    response.setMessage(updatedUser.getUsername()+" updated successfully");
+    response.setMessage(updatedUser.getUsername()+" updated his/her account successfully.");
     response.setData(updatedUser);
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
@@ -183,7 +183,7 @@ public class UserController {
   public ResponseEntity<ApiResponse<Bio>> updateUserBio(@Valid @RequestBody BioDTO bioDTO, HttpServletRequest request){
     Bio updatedUserBio = userService.updateUserBio(bioDTO, request);
     ApiResponse<Bio> response = new ApiResponse<>(HttpStatus.OK);
-    response.setMessage(updatedUserBio.getUser().getUsername()+" updated successfully");
+    response.setMessage(updatedUserBio.getUser().getUsername()+" updated his/her bio successfully.");
     response.setData(updatedUserBio);
     return new ResponseEntity<>(response, HttpStatus.OK);
   }

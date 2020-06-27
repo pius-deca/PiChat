@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class JwtFilter extends OncePerRequestFilter {
+
   private JwtProvider jwtProvider;
 
   public JwtFilter(JwtProvider jwtProvider){

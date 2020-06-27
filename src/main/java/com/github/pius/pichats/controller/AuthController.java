@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import javax.mail.SendFailedException;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
@@ -35,12 +36,12 @@ public class AuthController {
   }
 
   @PostMapping("/auth/signup")
-  public ResponseEntity<?> signup(@Valid @RequestBody SignupRequestDTO user, BindingResult bindingResult) throws MailSendException {
+  public ResponseEntity<?> signUp(@Valid @RequestBody SignupRequestDTO user, BindingResult bindingResult) throws Exception {
     ResponseEntity<?> errorMap = mapValidationErrorService.MapValidationService(bindingResult);
     if (errorMap != null){
       return errorMap;
     }
-    User createdUser = authService.register(modelMapper.map(user, User.class));
+    User createdUser = authService.register(user);
     ApiResponse<User> response = new ApiResponse<>(HttpStatus.CREATED);
     response.setData(createdUser);
     response.setMessage("A new user as been created successfully");
