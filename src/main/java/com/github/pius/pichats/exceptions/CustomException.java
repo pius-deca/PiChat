@@ -20,7 +20,6 @@ public class CustomException extends RuntimeException {
     this.status = status;
   }
 
-  @Override
   public String getMessage() {
     return this.message;
   }

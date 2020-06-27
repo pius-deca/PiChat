@@ -9,6 +9,8 @@ public interface FollowService {
   Follow acceptRequest(String username, HttpServletRequest request);
   String declineRequest(String username, HttpServletRequest request);
   String unFollow(String username, HttpServletRequest request);
-  int countFollowers(HttpServletRequest request);
-  int countFollowing(HttpServletRequest request);
+//  int countFollowers(HttpServletRequest request);
+//  int countFollowing(HttpServletRequest request);
+  int countFollowingSearchedUser(String username, HttpServletRequest request);
+  int countFollowersOfSearchedUser(String username, HttpServletRequest request);
 }

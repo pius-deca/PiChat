@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
   Optional<Post> findByPost(String post);
-  List<Post> findAllByUserOrderByCreatedAt(User user);
+  List<Post> findAllByUserOrderByCreatedAtDesc(User user);
+  List<Post> findAllByOrderByCreatedAtDesc();
   int countPostsByUser(User user);
 }

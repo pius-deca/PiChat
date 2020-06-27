@@ -1,5 +1,6 @@
 package com.github.pius.pichats.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "users")
-public class User extends GeneralBaseEntity{
+public class User extends GeneralBaseEntity {
 
   @NotBlank(message = "Please provide first name")
   @Column(nullable = false, name = "first_name")
@@ -39,19 +40,6 @@ public class User extends GeneralBaseEntity{
   @Column(nullable = false)
   private String password;
 
-  @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "user", orphanRemoval = true)
-  @JsonIgnore
-  private List<Post> posts;
-
-  @OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, mappedBy = "user", orphanRemoval = true)
-  @JsonIgnore
-  private ProfilePic profilePic;
-
-  @OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, mappedBy = "user", orphanRemoval = true)
-  @JsonIgnore
-  private Bio bio;
-
-  @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, mappedBy = "user", orphanRemoval = true)
-  @JsonIgnore
-  private List<Follow> followers;
+  @Column(name = "is_active", nullable = false)
+  private boolean active = false;
 }

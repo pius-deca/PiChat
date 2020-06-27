@@ -12,6 +12,7 @@ import java.util.Date;
 public class BioDTO {
   private String description;
   private String phone;
+  private String gender;
   private Date dob;
   private String address;
   private String country;

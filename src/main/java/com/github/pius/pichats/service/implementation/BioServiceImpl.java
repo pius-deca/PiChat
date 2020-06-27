@@ -29,7 +29,7 @@ public class BioServiceImpl implements BioService {
     try{
       User user = jwtProvider.resolveUser(request);
       Bio newBio = new Bio();
-      return this.saveBio(bio, user, newBio);
+      return saveBio(bio, user, newBio);
     }catch (Exception ex){
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
@@ -43,6 +43,7 @@ public class BioServiceImpl implements BioService {
       userBio.get().setCountry(bio.getCountry());
       userBio.get().setDob(bio.getDob());
       userBio.get().setPhone(bio.getPhone());
+      userBio.get().setGender(bio.getGender());
       return bioRepository.save(userBio.get());
     }
     newBio.setDescription(bio.getDescription());
@@ -50,6 +51,7 @@ public class BioServiceImpl implements BioService {
     newBio.setCountry(bio.getCountry());
     newBio.setDob(bio.getDob());
     newBio.setPhone(bio.getPhone());
+    newBio.setGender(bio.getGender());
     newBio.setUser(user);
     return bioRepository.save(newBio);
   }

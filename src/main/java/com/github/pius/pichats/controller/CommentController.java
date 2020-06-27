@@ -15,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping
+@CrossOrigin
 public class CommentController {
   private CommentService commentService;
   private ModelMapper modelMapper;

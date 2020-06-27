@@ -21,7 +21,7 @@ public class CloudService {
     this.cloudConfiguration = cloudConfiguration;
   }
 
-  public void upload(String path) throws Exception {
+  public Map upload(String path) throws Exception {
     try {
       String num = RandomStringUtils.randomNumeric(5);
       File toUpload = new File(path);
@@ -38,7 +38,7 @@ public class CloudService {
       }
       Map params = ObjectUtils.asMap("public_id", folder + fileName,
         "resource_type", resource_type);
-      cloudConfiguration.configCloud().uploader().upload(toUpload, params);
+      return cloudConfiguration.configCloud().uploader().upload(toUpload, params);
     }catch (IOException ex){
       throw new Exception(ex.getMessage());
     }

@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -57,15 +58,17 @@ public class ProfileServiceImpl implements ProfileService {
       ProfilePic profile = new ProfilePic();
       Optional<ProfilePic> profilePic = profileRepository.findByUser(user);
       // upload post if username exists
-      cloudService.upload(this.pictureFormat(pic.getProfilePic()));
+      Map uploaded = cloudService.upload(this.pictureFormat(pic.getProfilePic()));
       if (profilePic.isPresent()){
         // delete the previous profile before uploading a new one
         cloudService.deleteFile(profilePic.get().getProfilePic());
         profilePic.get().setProfilePic(cloudService.fileName);
+        profilePic.get().setUrl((String) uploaded.get("secure_url"));
         return profileRepository.save(profilePic.get());
       }
       profile.setProfilePic(cloudService.fileName);
       profile.setUser(user);
+      profile.setUrl((String) uploaded.get("secure_url"));
       return profileRepository.save(profile);
     }catch (Exception ex){
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);

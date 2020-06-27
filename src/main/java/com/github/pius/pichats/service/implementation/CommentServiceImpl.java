@@ -20,18 +20,21 @@ public class CommentServiceImpl implements CommentService {
   private CommentRepository commentRepository;
   private JwtProvider jwtProvider;
   private PostService postService;
+  private AuthServiceImpl authServiceImpl;
 
   @Autowired
-  public CommentServiceImpl(CommentRepository commentRepository, JwtProvider jwtProvider, PostService postService) {
+  public CommentServiceImpl(CommentRepository commentRepository, JwtProvider jwtProvider, PostService postService, AuthServiceImpl authServiceImpl) {
     this.commentRepository = commentRepository;
     this.jwtProvider = jwtProvider;
     this.postService = postService;
+    this.authServiceImpl = authServiceImpl;
   }
 
   // this method enables a user find a post made by any user and make comments on it
   @Override
   public Comment makeComment(String post, Comment comment, HttpServletRequest request) {
     try{
+//      authServiceImpl.isAccountActive(request);
       User user = jwtProvider.resolveUser(request);
       // find any post to comment on
       Post postFound = postService.getPost(post);
@@ -48,11 +51,13 @@ public class CommentServiceImpl implements CommentService {
   // this method finds a post user has made and get all comments on the post
   @Override
   public List<Comment> getAllCommentsForAPost(String post, HttpServletRequest request) {
-    return commentRepository.findByPost(postService.findPost(post, request));
+//    authServiceImpl.isAccountActive(request);
+    return commentRepository.findByPostOrderByCreatedAtDesc(postService.findPost(post, request));
   }
 
   @Override
   public int countPostComments(String post, HttpServletRequest request) {
+//    authServiceImpl.isAccountActive(request);
     Post postFound = postService.findPost(post, request);
     return commentRepository.countCommentsByPost(postFound);
   }
