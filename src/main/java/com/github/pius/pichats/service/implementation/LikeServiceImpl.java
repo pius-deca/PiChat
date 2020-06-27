@@ -34,7 +34,7 @@ public class LikeServiceImpl implements LikeService {
   @Override
   public Like likeOrUnlike(String post, HttpServletRequest request) {
     try{
-      authServiceImpl.isAccountActive(request);
+//      authServiceImpl.isAccountActive(request);
       User user = jwtProvider.resolveUser(request);
       if (user.isActive()){
         // find any post to like

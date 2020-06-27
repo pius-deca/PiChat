@@ -109,7 +109,7 @@ public class PostServiceImpl implements PostService {
   // find a post of the logged in user and delete
   @Override
   public void delete(String post, HttpServletRequest request) throws Exception {
-    authServiceImpl.isAccountActive(request);
+//    authServiceImpl.isAccountActive(request);
     cloudService.deleteFile(post);
     postRepository.delete(this.findPost(post, request));
   }
@@ -117,7 +117,7 @@ public class PostServiceImpl implements PostService {
   // find a post of the logged in user mark put in a list
   @Override
   public String selectPostToDelete(String post, HttpServletRequest request){
-    authServiceImpl.isAccountActive(request);
+//    authServiceImpl.isAccountActive(request);
     Post postFound = this.findPost(post, request);
     if (!listOfPosts.contains(postFound.getPost())){
       listOfPosts.add(postFound.getPost());
@@ -130,7 +130,7 @@ public class PostServiceImpl implements PostService {
   // clear the list of posts if not empty
   @Override
   public String clearBatchDelete(HttpServletRequest request){
-    authServiceImpl.isAccountActive(request);
+//    authServiceImpl.isAccountActive(request);
     if (!listOfPosts.isEmpty()){
       listOfPosts.clear();
       return "Post(s) marked for delete have been canceled";
@@ -141,7 +141,7 @@ public class PostServiceImpl implements PostService {
   // delete the list posts of a logged in user
   @Override
   public String batchDelete(HttpServletRequest request) throws Exception {
-    authServiceImpl.isAccountActive(request);
+//    authServiceImpl.isAccountActive(request);
     if (!listOfPosts.isEmpty()){
       for (String post : listOfPosts){
         delete(post, request);

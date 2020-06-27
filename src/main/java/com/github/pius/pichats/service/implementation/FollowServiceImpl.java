@@ -74,7 +74,7 @@ public class FollowServiceImpl implements FollowService {
   @Override
   public String declineRequest(String username, HttpServletRequest request) {
     try{
-      authServiceImpl.isAccountActive(request);
+//      authServiceImpl.isAccountActive(request);
       User user = jwtProvider.resolveUser(request);
       User foundRequester = userService.searchByUsername(username, request);
       Optional<Follow> following = followRepository.findByUser(foundRequester);
@@ -91,7 +91,7 @@ public class FollowServiceImpl implements FollowService {
   @Override
   public String unFollow(String username, HttpServletRequest request) {
     try{
-      authServiceImpl.isAccountActive(request);
+//      authServiceImpl.isAccountActive(request);
       User user = jwtProvider.resolveUser(request);
       userService.searchByUsername(username, request);
       Optional<Follow> following = followRepository.findByFollowing(username);

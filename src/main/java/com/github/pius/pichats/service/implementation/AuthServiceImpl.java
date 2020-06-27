@@ -131,11 +131,4 @@ public class AuthServiceImpl implements AuthService {
       throw new CustomException("Invalid email or username/password supplied...", HttpStatus.UNPROCESSABLE_ENTITY);
     }
   }
-
-//  public void isAccountActive(HttpServletRequest request){
-//    User user = jwtProvider.resolveUser(request);
-//    if (!user.isActive()) {
-//      throw new CustomException("Your account is yet to be activated", HttpStatus.UNAUTHORIZED);
-//    }
-//  }
 }
