@@ -132,10 +132,10 @@ public class AuthServiceImpl implements AuthService {
     }
   }
 
-  public void isAccountActive(HttpServletRequest request){
-    User user = jwtProvider.resolveUser(request);
-    if (!user.isActive()) {
-      throw new CustomException("Your account is yet to be activated", HttpStatus.UNAUTHORIZED);
-    }
-  }
+//  public void isAccountActive(HttpServletRequest request){
+//    User user = jwtProvider.resolveUser(request);
+//    if (!user.isActive()) {
+//      throw new CustomException("Your account is yet to be activated", HttpStatus.UNAUTHORIZED);
+//    }
+//  }
 }
