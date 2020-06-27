@@ -1,11 +1,13 @@
 version: 2.1
 
+jobs:
+  build:
+    working_directory: ~/pichat
+
 orbs:
   maven: circleci/maven@0.0.12
 
 workflows:
   maven_test:
     jobs:
-      build:
-        working_directory: ~/
       - maven/test # checkout, build, test, and upload test results
