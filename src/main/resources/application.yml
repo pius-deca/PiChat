@@ -7,8 +7,7 @@ spring:
     hibernate:
       ddl-auto: create-drop
     properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+      dialect: org.hibernate.dialect.PostgreSQLDialect
   datasource:
     url: ${DATABASE_URL:jdbc:postgresql://${DB_HOST:localhost}:5432/pichat}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
