@@ -7,5 +7,5 @@ workflows:
   maven_test:
     jobs:
       build:
-        working_directory: ~/project
+        working_directory: ~/
       - maven/test # checkout, build, test, and upload test results
