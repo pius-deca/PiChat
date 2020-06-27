@@ -49,8 +49,8 @@ public class AuthController {
   }
 
   @GetMapping("/user/activate")
-  public ResponseEntity<?> activate(@RequestParam String code){
-    String activated = authService.activate(code);
+  public ResponseEntity<?> activate(@RequestParam String code, HttpServletRequest request){
+    String activated = authService.activate(code, request);
     ApiResponse<User> response = new ApiResponse<>(HttpStatus.OK);
     response.setMessage(activated);
     return new ResponseEntity<>(response, HttpStatus.OK);

@@ -42,23 +42,4 @@ public class User extends GeneralBaseEntity {
 
   @Column(name = "is_active", nullable = false)
   private boolean active = false;
-
-  @OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, mappedBy = "user", orphanRemoval = true)
-  @JsonIgnore
-  private EmailVerification emailVerification;
-
-  @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "user", orphanRemoval = true)
-  @JsonIgnore
-  private List<Post> posts;
-
-  @OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, mappedBy = "user", orphanRemoval = true)
-  private ProfilePic profilePic;
-
-  @OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, mappedBy = "user", orphanRemoval = true)
-  @JsonIgnore
-  private Bio bio;
-
-  @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, mappedBy = "user", orphanRemoval = true)
-  @JsonIgnore
-  private List<Follow> followers;
 }

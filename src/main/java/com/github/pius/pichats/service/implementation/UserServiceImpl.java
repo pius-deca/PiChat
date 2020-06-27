@@ -112,9 +112,13 @@ public class UserServiceImpl implements UserService {
         updateRequestDTO.setToken(token);
         // set user account to false if email is updated
         user.setActive(false);
-        user.getEmailVerification().setCode(code);
-        user.getEmailVerification().setEmail(updateRequestDTO.getEmail());
-        user.getEmailVerification().setValidity(LocalDateTime.now().plusHours(15));
+        Optional<EmailVerification> em = emailVerificationRepository.findByUser(user);
+        if (em.isPresent()){
+          em.get().setCode(code);
+          em.get().setValidity(LocalDateTime.now().plusHours(15));
+          emailVerificationRepository.save(em.get());
+        }
+        throw new CustomException("Email is not verified", HttpStatus.BAD_REQUEST);
       }else if (!(user.getUsername().toLowerCase().equals(updateRequestDTO.getUsername().toLowerCase()))){
         if (userRepository.existsByUsername(updateRequestDTO.getUsername().toLowerCase())){
           throw new CustomException(updateRequestDTO.getUsername()+" already exists", HttpStatus.BAD_REQUEST);

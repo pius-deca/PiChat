@@ -105,27 +105,27 @@ public class FollowServiceImpl implements FollowService {
     }
   }
 
-  @Override
-  public int countFollowers(HttpServletRequest request){
-    try{
-//      authServiceImpl.isAccountActive(request);
-      User user = jwtProvider.resolveUser(request);
-      return followRepository.countFollowersByFollowingAndAccepted(user.getUsername(), true);
-    }catch (Exception ex){
-      throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
-    }
-  }
-
-  @Override
-  public int countFollowing(HttpServletRequest request){
-    try{
-//      authServiceImpl.isAccountActive(request);
-      User user = jwtProvider.resolveUser(request);
-      return followRepository.countFollowingByUserAndAccepted(user, true);
-    }catch (Exception ex){
-      throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
-    }
-  }
+//  @Override
+//  public int countFollowers(HttpServletRequest request){
+//    try{
+////      authServiceImpl.isAccountActive(request);
+//      User user = jwtProvider.resolveUser(request);
+//      return followRepository.countFollowersByFollowingAndAccepted(user.getUsername(), true);
+//    }catch (Exception ex){
+//      throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
+//    }
+//  }
+//
+//  @Override
+//  public int countFollowing(HttpServletRequest request){
+//    try{
+////      authServiceImpl.isAccountActive(request);
+//      User user = jwtProvider.resolveUser(request);
+//      return followRepository.countFollowingByUserAndAccepted(user, true);
+//    }catch (Exception ex){
+//      throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
+//    }
+//  }
 
   @Override
   public int countFollowersOfSearchedUser(String username, HttpServletRequest request){

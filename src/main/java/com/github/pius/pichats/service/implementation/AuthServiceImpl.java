@@ -74,7 +74,6 @@ public class AuthServiceImpl implements AuthService {
       newUser.setPassword(passwordEncoder.encode(user.getPassword()));
       newUser.setUsername(user.getUsername().toLowerCase());
       EmailVerification em = new EmailVerification();
-      em.setEmail(newUser.getEmail());
       em.setValidity(LocalDateTime.now().plusHours(15));
       em.setCode(code);
       em.setUser(newUser);
@@ -90,8 +89,9 @@ public class AuthServiceImpl implements AuthService {
   }
 
   @Override
-  public String activate(String code) {
-    Optional<EmailVerification> em = emailVerificationRepository.findByCode(code);
+  public String activate(String code, HttpServletRequest request) {
+    User user = jwtProvider.resolveUser(request);
+    Optional<EmailVerification> em = emailVerificationRepository.findByCodeAndUser(code, user);
     if (!em.isPresent()){
       throw new CustomException("Activation code is wrong", HttpStatus.BAD_REQUEST);
     }
@@ -99,7 +99,6 @@ public class AuthServiceImpl implements AuthService {
     if (e.getValidity().isBefore(LocalDateTime.now())) {
       throw new CustomException("Activation code has expired", HttpStatus.BAD_REQUEST);
     }
-    User user = e.getUser();
     user.setActive(true);
     userRepository.save(user);
     return "Account has been activated";

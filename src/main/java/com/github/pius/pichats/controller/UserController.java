@@ -126,21 +126,21 @@ public class UserController {
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
-  @GetMapping("/followers")
-  public ResponseEntity<ApiResponse<Integer>> followers(HttpServletRequest request){
-    int numOfFollowers = followService.countFollowers(request);
-    ApiResponse<Integer> response = new ApiResponse<>(HttpStatus.OK);
-    response.setData(numOfFollowers);
-    return new ResponseEntity<>(response, HttpStatus.OK);
-  }
-
-  @GetMapping("/following")
-  public ResponseEntity<ApiResponse<Integer>> following(HttpServletRequest request){
-    int numOfFollowing = followService.countFollowing(request);
-    ApiResponse<Integer> response = new ApiResponse<>(HttpStatus.OK);
-    response.setData(numOfFollowing);
-    return new ResponseEntity<>(response, HttpStatus.OK);
-  }
+//  @GetMapping("/followers")
+//  public ResponseEntity<ApiResponse<Integer>> followers(HttpServletRequest request){
+//    int numOfFollowers = followService.countFollowers(request);
+//    ApiResponse<Integer> response = new ApiResponse<>(HttpStatus.OK);
+//    response.setData(numOfFollowers);
+//    return new ResponseEntity<>(response, HttpStatus.OK);
+//  }
+//
+//  @GetMapping("/following")
+//  public ResponseEntity<ApiResponse<Integer>> following(HttpServletRequest request){
+//    int numOfFollowing = followService.countFollowing(request);
+//    ApiResponse<Integer> response = new ApiResponse<>(HttpStatus.OK);
+//    response.setData(numOfFollowing);
+//    return new ResponseEntity<>(response, HttpStatus.OK);
+//  }
 
   @GetMapping("/{username}/followers")
   public ResponseEntity<ApiResponse<Integer>> followers(@PathVariable(name = "username") String username, HttpServletRequest request){

@@ -16,9 +16,6 @@ import java.time.LocalDateTime;
 public class EmailVerification extends GeneralBaseEntity {
 
     @Column(nullable = false)
-    private String email;
-
-    @Column(nullable = false)
     private String code;
 
     @Future
