@@ -52,7 +52,7 @@ public class ProfileServiceImpl implements ProfileService {
 
   // this method uploads and edits profile
   @Override
-  public ProfilePic uploadProfile(ProfilePic pic, HttpServletRequest request) {
+  public Object uploadProfile(ProfilePic pic, HttpServletRequest request) {
     try{
       User user = jwtProvider.resolveUser(request);
       ProfilePic profile = new ProfilePic();
@@ -69,7 +69,8 @@ public class ProfileServiceImpl implements ProfileService {
       profile.setProfilePic(cloudService.fileName);
       profile.setUser(user);
       profile.setUrl((String) uploaded.get("secure_url"));
-      return profileRepository.save(profile);
+      profileRepository.save(profile);
+      return uploaded.get("secure_url");
     }catch (Exception ex){
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }

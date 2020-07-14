@@ -99,7 +99,7 @@ public class PostServiceImpl implements PostService {
   @Override
   public List<Post> findAll(HttpServletRequest request) {
     try{
-      User user = jwtProvider.resolveUser(request);
+      jwtProvider.resolveUser(request);
       return postRepository.findAllByOrderByCreatedAtDesc();
     }catch (Exception ex){
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);

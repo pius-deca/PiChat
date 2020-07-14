@@ -25,6 +25,7 @@ public class CloudService {
     try {
       String num = RandomStringUtils.randomNumeric(5);
       File toUpload = new File(path);
+      System.out.println(toUpload.getAbsoluteFile());
       String folder = "piChat";
       String resource_type = null;
       if (path.endsWith(".jpg") || path.endsWith(".png") || path.endsWith(".pdf")){
