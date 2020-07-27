@@ -5,15 +5,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProfilePicDTO {
-
-  @NotBlank(message = "Please provide a profile picture")
-  private String profilePic;
-
-  private User user;
+public class CommentResponseDTO {
+    private String comment;
+    private User user;
 }

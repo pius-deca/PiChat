@@ -32,7 +32,7 @@ public class BioController {
     Bio newBio = bioService.addOrUpdate(modelMapper.map(bio, Bio.class), request);
     ApiResponse<Bio> response = new ApiResponse<>(HttpStatus.CREATED);
     response.setData(newBio);
-    response.setMessage("A user has updated is bio");
+    response.setMessage("User has updated is bio");
     return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
 

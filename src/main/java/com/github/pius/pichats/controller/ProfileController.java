@@ -1,14 +1,15 @@
 package com.github.pius.pichats.controller;
 
 import com.github.pius.pichats.apiresponse.ApiResponse;
-import com.github.pius.pichats.dto.ProfilePicDTO;
 import com.github.pius.pichats.model.ProfilePic;
 import com.github.pius.pichats.service.ProfileService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -26,12 +27,12 @@ public class ProfileController {
     this.modelMapper = modelMapper;
   }
 
-  @PostMapping("/profile")
-  public ResponseEntity<ApiResponse<Object>> updateProfile(@Valid @RequestBody ProfilePicDTO profile, HttpServletRequest request){
-    Object newProfile = profileService.uploadProfile(modelMapper.map(profile, ProfilePic.class), request);
+  @PostMapping(value = "/profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<ApiResponse<Object>> updateProfile(@Valid @RequestParam("file") MultipartFile file, HttpServletRequest request){
+    Object newProfile = profileService.uploadProfile(file, request);
     ApiResponse<Object> response = new ApiResponse<>(HttpStatus.CREATED);
     response.setData(newProfile);
-    response.setMessage("A user has updated is profile picture");
+    response.setMessage("Profile picture uploaded successfully!");
     return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
 
