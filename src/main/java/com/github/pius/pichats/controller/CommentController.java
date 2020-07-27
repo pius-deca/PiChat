@@ -4,6 +4,7 @@ import com.github.pius.pichats.apiresponse.ApiResponse;
 import com.github.pius.pichats.dto.CommentDTO;
 import com.github.pius.pichats.model.Comment;
 import com.github.pius.pichats.service.CommentService;
+import com.github.pius.pichats.service.Utils.PageResultConverter;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,10 +35,10 @@ public class CommentController {
     return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
 
-  @GetMapping("/post/{postId}/comment")
-  public ResponseEntity<ApiResponse<List<Comment>>> AllCommentsForPost(@PathVariable(name = "postId") String post, HttpServletRequest request){
-    List<Comment> comments = commentService.getAllCommentsForAPost(post, request);
-    ApiResponse<List<Comment>> response = new ApiResponse<>(HttpStatus.OK);
+  @GetMapping("/post/{postId}/comments")
+  public ResponseEntity<ApiResponse<PageResultConverter>> AllCommentsForPost(@PathVariable(name = "postId") String post, @RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "limit", defaultValue = "10") int limit, HttpServletRequest request){
+    PageResultConverter comments = commentService.getAllCommentsForAPost(page, limit, post, request);
+    ApiResponse<PageResultConverter> response = new ApiResponse<>(HttpStatus.OK);
     response.setData(comments);
     response.setMessage("All comments have been retrieved for post of id : "+post);
     return new ResponseEntity<>(response, HttpStatus.OK);

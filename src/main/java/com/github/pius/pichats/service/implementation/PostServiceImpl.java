@@ -1,5 +1,7 @@
 package com.github.pius.pichats.service.implementation;
 
+import com.github.pius.pichats.dto.PostDTO;
+import com.github.pius.pichats.dto.PostResponseDTO;
 import com.github.pius.pichats.exceptions.CustomException;
 import com.github.pius.pichats.model.Post;
 import com.github.pius.pichats.model.User;
@@ -8,14 +10,19 @@ import com.github.pius.pichats.repository.UserRepository;
 import com.github.pius.pichats.security.JwtProvider;
 import com.github.pius.pichats.service.PostService;
 import com.github.pius.pichats.service.UserService;
+import com.github.pius.pichats.service.Utils.EntityPageIntoDtoPage;
+import com.github.pius.pichats.service.Utils.PageResultConverter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -26,15 +33,17 @@ public class PostServiceImpl implements PostService {
   private List<String> listOfPosts = new ArrayList<>();
   private AuthServiceImpl authServiceImpl;
   private UserService userService;
+  private final EntityPageIntoDtoPage entityPageIntoDtoPage;
 
   @Autowired
-  public PostServiceImpl(JwtProvider jwtProvider, PostRepository postRepository, CloudService cloudService, AuthServiceImpl authServiceImpl, UserService userService, UserRepository userRepository) {
+  public PostServiceImpl(JwtProvider jwtProvider, PostRepository postRepository, CloudService cloudService, AuthServiceImpl authServiceImpl, UserService userService, UserRepository userRepository, EntityPageIntoDtoPage entityPageIntoDtoPage) {
     this.jwtProvider = jwtProvider;
     this.postRepository = postRepository;
     this.cloudService = cloudService;
     this.authServiceImpl = authServiceImpl;
     this.userService = userService;
     this.userRepository = userRepository;
+    this.entityPageIntoDtoPage = entityPageIntoDtoPage;
   }
 
   // random post to comment on by any user
@@ -49,19 +58,19 @@ public class PostServiceImpl implements PostService {
 
   // a logged in user makes a post
   @Override
-  public Object post(Post post, HttpServletRequest request) {
+  public Object post(PostDTO post, MultipartFile file, HttpServletRequest request) {
     try{
 //      authServiceImpl.isAccountActive(request);
       User user = jwtProvider.resolveUser(request);
       Post newPost = new Post();
       newPost.setCaption(post.getCaption());
       // upload post if username exists
-      Map uploaded = cloudService.upload(post.getPost());
-      newPost.setPost(cloudService.fileName);
+      Object uploaded = cloudService.upload(file);
+      newPost.setPost(cloudService.getFileName());
       newPost.setUser(user);
-      newPost.setUrl((String) uploaded.get("secure_url"));
+      newPost.setUrl(uploaded.toString());
       postRepository.save(newPost);
-      return uploaded.get("secure_url");
+      return uploaded;
     }catch (Exception ex){
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
@@ -85,11 +94,27 @@ public class PostServiceImpl implements PostService {
 
   // return all the post of a logged in user
   @Override
-  public List<Post> findAllPostsByUser(String username, HttpServletRequest request) {
+  public PageResultConverter findAllPostsByUser(int page, int limit, String username, HttpServletRequest request) {
     try{
 //      authServiceImpl.isAccountActive(request);
       User user = userService.searchByUsername(username, request);
-      return postRepository.findAllByUserOrderByCreatedAtDesc(user);
+
+      if(page > 0) page--;
+
+      Pageable pageableReq = PageRequest.of(page, limit);
+
+      Page<Post> entities = postRepository.findAllByUserOrderByCreatedAtDesc(pageableReq, user);
+
+      Page<PostResponseDTO> postResponse = entityPageIntoDtoPage.mapEntityPageIntoDtoPage(entities, PostResponseDTO.class);
+
+      postResponse.stream().forEach(res -> {
+        res.setCaption(res.getCaption());
+        res.setPost(res.getPost());
+        res.setUrl(res.getUrl());
+        res.setUser(res.getUser());
+      });
+
+      return new PageResultConverter(postResponse);
     }catch (Exception ex){
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
@@ -97,10 +122,26 @@ public class PostServiceImpl implements PostService {
 
   // return all the post of a logged in user
   @Override
-  public List<Post> findAll(HttpServletRequest request) {
+  public PageResultConverter findAll(int page, int limit, HttpServletRequest request) {
     try{
-      User user = jwtProvider.resolveUser(request);
-      return postRepository.findAllByOrderByCreatedAtDesc();
+      jwtProvider.resolveUser(request);
+
+      if(page > 0) page--;
+
+      Pageable pageableReq = PageRequest.of(page, limit);
+
+      Page<Post> entities = postRepository.findAllByOrderByCreatedAtDesc(pageableReq);
+
+      Page<PostResponseDTO> postResponse = entityPageIntoDtoPage.mapEntityPageIntoDtoPage(entities, PostResponseDTO.class);
+
+      postResponse.stream().forEach(res -> {
+        res.setCaption(res.getCaption());
+        res.setPost(res.getPost());
+        res.setUrl(res.getUrl());
+        res.setUser(res.getUser());
+      });
+
+      return new PageResultConverter(postResponse);
     }catch (Exception ex){
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }

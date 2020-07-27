@@ -24,7 +24,7 @@ public class LikeController {
     Like newLike = likeService.likeOrUnlike(post, request);
     ApiResponse<Like> response = new ApiResponse<>(HttpStatus.CREATED);
     response.setData(newLike);
-    response.setMessage("A post has been liked by a user");
+    response.setMessage("Post has been liked by a user");
     return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
 

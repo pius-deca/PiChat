@@ -15,5 +15,5 @@ public interface UserService {
   List<User> searchUsernameByString(String username, HttpServletRequest request);
   String changePassword(ChangePasswordDTO passwordDTO, HttpServletRequest request);
   UpdateResponseDTO updateUser(UpdateRequestDTO updateRequestDTO, HttpServletRequest request);
-  Bio updateUserBio(BioDTO bioDTO, HttpServletRequest request);
+//  Bio updateUserBio(BioDTO bioDTO, HttpServletRequest request);
 }

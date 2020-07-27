@@ -147,33 +147,33 @@ public class UserServiceImpl implements UserService {
       throw new CustomException("Error trying to update '"+user.getUsername()+"'", HttpStatus.BAD_REQUEST);
     }
   }
-
-  @Override
-  public Bio updateUserBio(BioDTO bioDTO, HttpServletRequest request) {
-    User user = jwtProvider.resolveUser(request);
-    try{
-      Optional<Bio> userBio = bioRepository.findByUser(user);
-      if (userBio.isPresent()){
-        userBio.get().setPhone(bioDTO.getPhone());
-        userBio.get().setGender(bioDTO.getGender());
-        userBio.get().setDob(bioDTO.getDob());
-        userBio.get().setCountry(bioDTO.getCountry());
-        userBio.get().setAddress(bioDTO.getAddress());
-        userBio.get().setDescription(bioDTO.getDescription());
-        return bioRepository.save(userBio.get());
-      }
-      Bio newUserBio = new Bio();
-      newUserBio.setPhone(bioDTO.getPhone());
-      newUserBio.setGender(bioDTO.getGender());
-      newUserBio.setDob(bioDTO.getDob());
-      newUserBio.setCountry(bioDTO.getCountry());
-      newUserBio.setAddress(bioDTO.getAddress());
-      newUserBio.setDescription(bioDTO.getDescription());
-      newUserBio.setUser(user);
-      return bioRepository.save(newUserBio);
-    }catch (Exception e){
-      throw new CustomException("Error trying to update '"+user.getUsername()+"'", HttpStatus.BAD_REQUEST);
-    }
-  }
+//
+//  @Override
+//  public Bio updateUserBio(BioDTO bioDTO, HttpServletRequest request) {
+//    User user = jwtProvider.resolveUser(request);
+//    try{
+//      Optional<Bio> userBio = bioRepository.findByUser(user);
+//      if (userBio.isPresent()){
+//        userBio.get().setPhone(bioDTO.getPhone());
+//        userBio.get().setGender(bioDTO.getGender());
+//        userBio.get().setDob(bioDTO.getDob());
+//        userBio.get().setCountry(bioDTO.getCountry());
+//        userBio.get().setAddress(bioDTO.getAddress());
+//        userBio.get().setDescription(bioDTO.getDescription());
+//        return bioRepository.save(userBio.get());
+//      }
+//      Bio newUserBio = new Bio();
+//      newUserBio.setPhone(bioDTO.getPhone());
+//      newUserBio.setGender(bioDTO.getGender());
+//      newUserBio.setDob(bioDTO.getDob());
+//      newUserBio.setCountry(bioDTO.getCountry());
+//      newUserBio.setAddress(bioDTO.getAddress());
+//      newUserBio.setDescription(bioDTO.getDescription());
+//      newUserBio.setUser(user);
+//      return bioRepository.save(newUserBio);
+//    }catch (Exception e){
+//      throw new CustomException("Error trying to update '"+user.getUsername()+"'", HttpStatus.BAD_REQUEST);
+//    }
+//  }
 
 }

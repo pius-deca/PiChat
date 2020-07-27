@@ -44,7 +44,7 @@ public class AuthController {
     User createdUser = authService.register(user);
     ApiResponse<User> response = new ApiResponse<>(HttpStatus.CREATED);
     response.setData(createdUser);
-    response.setMessage("A new user as been created successfully");
+    response.setMessage("User as been created successfully");
     return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
 
@@ -65,7 +65,7 @@ public class AuthController {
     LoginResponseDTO loginResponse = authService.login(user);
     ApiResponse<LoginResponseDTO> response = new ApiResponse<>(HttpStatus.OK);
     response.setData(loginResponse);
-    response.setMessage("The user has login successfully");
+    response.setMessage("User has login successfully");
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 

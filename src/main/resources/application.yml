@@ -22,6 +22,11 @@ spring:
         smtp:
           username: ${HAIRX_MAIL:mypichatapp@gmail.com}
           password: ${HAIRX_MAIL_PASSWORD:pichat1996}
+
+  servlet:
+    multipart:
+      max-file-size: 200KB
+      max-request-size: 200KB
 com:
   cloudinary:
     cloud_name: ${cloud_name:piusaremieye}

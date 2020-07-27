@@ -1,11 +1,12 @@
 package com.github.pius.pichats.service;
 
 import com.github.pius.pichats.model.ProfilePic;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 
 public interface ProfileService {
-  ProfilePic uploadProfile(ProfilePic pic, HttpServletRequest request);
+  Object uploadProfile(MultipartFile pic, HttpServletRequest request);
   ProfilePic find(String pic, HttpServletRequest request);
   void delete(String profile, HttpServletRequest request) throws Exception;
 }
