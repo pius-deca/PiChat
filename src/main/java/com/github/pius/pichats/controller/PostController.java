@@ -20,8 +20,8 @@ import java.util.List;
 @RequestMapping()
 @CrossOrigin
 public class PostController {
-  private PostService postService;
-  private ModelMapper modelMapper;
+  private final PostService postService;
+  private final ModelMapper modelMapper;
 
   public PostController(PostService postService, ModelMapper modelMapper) {
     this.postService = postService;

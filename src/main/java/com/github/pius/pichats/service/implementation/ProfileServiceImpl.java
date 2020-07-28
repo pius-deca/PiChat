@@ -18,9 +18,9 @@ import java.util.Optional;
 @Service
 public class ProfileServiceImpl implements ProfileService {
 
-  private JwtProvider jwtProvider;
-  private ProfileRepository profileRepository;
-  private CloudService cloudService;
+  private final JwtProvider jwtProvider;
+  private final ProfileRepository profileRepository;
+  private final CloudService cloudService;
 
   @Autowired
   public ProfileServiceImpl(JwtProvider jwtProvider, ProfileRepository profileRepository, CloudService cloudService) {

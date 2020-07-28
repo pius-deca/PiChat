@@ -18,8 +18,8 @@ import java.util.List;
 @RequestMapping("/user")
 @CrossOrigin
 public class UserController {
-  private UserService userService;
-  private MapValidationErrorService mapValidationErrorService;
+  private final UserService userService;
+  private final MapValidationErrorService mapValidationErrorService;
 
   @Autowired
   public UserController(UserService userService, MapValidationErrorService mapValidationErrorService) {

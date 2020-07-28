@@ -15,8 +15,8 @@ import java.util.Optional;
 
 @Service
 public class BioServiceImpl implements BioService {
-  private BioRepository bioRepository;
-  private JwtProvider jwtProvider;
+  private final BioRepository bioRepository;
+  private final JwtProvider jwtProvider;
 
   @Autowired
   public BioServiceImpl(BioRepository bioRepository, JwtProvider jwtProvider) {

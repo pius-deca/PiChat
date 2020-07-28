@@ -6,7 +6,6 @@ import com.github.pius.pichats.exceptions.CustomException;
 import com.github.pius.pichats.model.Post;
 import com.github.pius.pichats.model.User;
 import com.github.pius.pichats.repository.PostRepository;
-import com.github.pius.pichats.repository.UserRepository;
 import com.github.pius.pichats.security.JwtProvider;
 import com.github.pius.pichats.service.PostService;
 import com.github.pius.pichats.service.UserService;
@@ -26,23 +25,21 @@ import java.util.List;
 
 @Service
 public class PostServiceImpl implements PostService {
-  private JwtProvider jwtProvider;
-  private PostRepository postRepository;
-  private UserRepository userRepository;
-  private CloudService cloudService;
+  private final JwtProvider jwtProvider;
+  private final PostRepository postRepository;
+  private final CloudService cloudService;
   private List<String> listOfPosts = new ArrayList<>();
-  private AuthServiceImpl authServiceImpl;
-  private UserService userService;
+  private final AuthServiceImpl authServiceImpl;
+  private final UserService userService;
   private final EntityPageIntoDtoPage entityPageIntoDtoPage;
 
   @Autowired
-  public PostServiceImpl(JwtProvider jwtProvider, PostRepository postRepository, CloudService cloudService, AuthServiceImpl authServiceImpl, UserService userService, UserRepository userRepository, EntityPageIntoDtoPage entityPageIntoDtoPage) {
+  public PostServiceImpl(JwtProvider jwtProvider, PostRepository postRepository, CloudService cloudService, AuthServiceImpl authServiceImpl, UserService userService, EntityPageIntoDtoPage entityPageIntoDtoPage) {
     this.jwtProvider = jwtProvider;
     this.postRepository = postRepository;
     this.cloudService = cloudService;
     this.authServiceImpl = authServiceImpl;
     this.userService = userService;
-    this.userRepository = userRepository;
     this.entityPageIntoDtoPage = entityPageIntoDtoPage;
   }
 

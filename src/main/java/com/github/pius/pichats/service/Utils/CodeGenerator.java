@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 public class CodeGenerator {
 
   public String activationToken(){
-    return RandomStringUtils.randomAlphanumeric(6);
+    return RandomStringUtils.randomAlphanumeric(6).toUpperCase();
   }
 
 }

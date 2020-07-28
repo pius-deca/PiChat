@@ -17,19 +17,17 @@ import java.util.Optional;
 
 @Service
 public class FollowServiceImpl implements FollowService {
-  private FollowRepository followRepository;
-  private UserRepository userRepository;
-  private UserService userService;
-  private JwtProvider jwtProvider;
-  private AuthServiceImpl authServiceImpl;
+  private final FollowRepository followRepository;
+  private final UserService userService;
+  private final JwtProvider jwtProvider;
+  private final AuthServiceImpl authServiceImpl;
 
   @Autowired
-  public FollowServiceImpl(FollowRepository followRepository, UserService userService, JwtProvider jwtProvider, AuthServiceImpl authServiceImpl, UserRepository userRepository) {
+  public FollowServiceImpl(FollowRepository followRepository, UserService userService, JwtProvider jwtProvider, AuthServiceImpl authServiceImpl) {
     this.followRepository = followRepository;
     this.userService = userService;
     this.jwtProvider = jwtProvider;
     this.authServiceImpl = authServiceImpl;
-    this.userRepository = userRepository;
   }
 
   @Override
