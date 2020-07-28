@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/user")
 @CrossOrigin
 public class FollowController {
-  private FollowService followService;
+  private final FollowService followService;
 
   @Autowired
   public FollowController(FollowService followService) {

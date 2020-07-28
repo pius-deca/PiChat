@@ -33,24 +33,22 @@ import java.util.Optional;
 @Service
 public class AuthServiceImpl implements AuthService {
 
-  private JwtProvider jwtProvider;
-  private UserRepository userRepository;
-  private PasswordEncoder passwordEncoder;
-  private AuthenticationManager authenticationManager;
-  private EmailVerificationRepository emailVerificationRepository;
-  private BioRepository bioRepository;
-  private EmailSenderService emailSenderService;
-  private CodeGenerator codeGenerator;
+  private final JwtProvider jwtProvider;
+  private final UserRepository userRepository;
+  private final PasswordEncoder passwordEncoder;
+  private final AuthenticationManager authenticationManager;
+  private final EmailVerificationRepository emailVerificationRepository;
+  private final EmailSenderService emailSenderService;
+  private final CodeGenerator codeGenerator;
 
   @Autowired
-  public AuthServiceImpl(JwtProvider jwtProvider, UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, EmailVerificationRepository emailVerificationRepository, EmailSenderService emailSenderService, BioRepository bioRepository, CodeGenerator codeGenerator) {
+  public AuthServiceImpl(JwtProvider jwtProvider, UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, EmailVerificationRepository emailVerificationRepository, EmailSenderService emailSenderService, CodeGenerator codeGenerator) {
     this.jwtProvider = jwtProvider;
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.authenticationManager = authenticationManager;
     this.emailVerificationRepository = emailVerificationRepository;
     this.emailSenderService = emailSenderService;
-    this.bioRepository = bioRepository;
     this.codeGenerator = codeGenerator;
   }
 

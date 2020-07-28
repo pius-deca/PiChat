@@ -2,9 +2,12 @@ package com.github.pius.pichats.service.implementation;
 
 import com.cloudinary.utils.ObjectUtils;
 import com.github.pius.pichats.configuration.CloudConfiguration;
+import com.github.pius.pichats.exceptions.CustomException;
+import com.github.pius.pichats.service.ImageFolder;
 import lombok.Data;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,12 +24,14 @@ import java.util.Objects;
 @Service
 public class CloudService {
 
-  private CloudConfiguration cloudConfiguration;
+  private final CloudConfiguration cloudConfiguration;
+  private final ImageFolder imageFolder;
   private String fileName;
 
   @Autowired
-  public CloudService(CloudConfiguration cloudConfiguration) {
+  public CloudService(CloudConfiguration cloudConfiguration, ImageFolder imageFolder) {
     this.cloudConfiguration = cloudConfiguration;
+    this.imageFolder = imageFolder;
   }
 
   public Object upload(MultipartFile file) throws Exception {
@@ -38,12 +43,11 @@ public class CloudService {
         File toUpload = filepath.toFile();
         String folder = "piChat";
         String resource_type = null;
-        if (filepath.toString().endsWith(".jpg") || filepath.toString().endsWith(".png") || filepath.toString().endsWith(".pdf")
-          || filepath.toString().endsWith(".JPG") || filepath.toString().endsWith(".PNG") || filepath.toString().endsWith(".PNG") || filepath.toString().endsWith(".jpeg") || filepath.toString().endsWith(".JPEG")){
+        if (imageFormat(filepath)){
           setFileName("image"+num);
           folder = folder+"/image/";
           resource_type = "image";
-        }else if(filepath.toString().endsWith(".mp4") || filepath.toString().endsWith(".avi")){
+        }else if(videoFormat(filepath)){
           setFileName("video"+num);
           folder = folder+"/video/";
           resource_type = "video";
@@ -58,6 +62,20 @@ public class CloudService {
     }catch (IOException ex){
       throw new Exception(ex.getMessage());
     }
+  }
+
+  public static boolean imageFormat(Path filePath){
+    if (filePath.toString().toLowerCase().endsWith(".jpg") || filePath.toString().toLowerCase().endsWith(".jpeg") || filePath.toString().toLowerCase().endsWith(".png") || filePath.toString().toLowerCase().endsWith(".pdf")){
+      return true;
+    }
+    throw new CustomException("Not an image format", HttpStatus.BAD_REQUEST);
+  }
+
+  public static boolean videoFormat(Path filePath){
+    if (filePath.toString().toLowerCase().endsWith(".mp4") || filePath.toString().toLowerCase().endsWith(".mpeg") || filePath.toString().toLowerCase().endsWith(".avi") || filePath.toString().toLowerCase().endsWith(".mkv")){
+      return true;
+    }
+    throw new CustomException("Not a video format", HttpStatus.BAD_REQUEST);
   }
 
   public void deleteFile(String post) throws Exception {

@@ -17,10 +17,10 @@ import java.util.Optional;
 
 @Service
 public class LikeServiceImpl implements LikeService {
-  private LikeRepository likeRepository;
-  private JwtProvider jwtProvider;
-  private PostService postService;
-  private AuthServiceImpl authServiceImpl;
+  private final LikeRepository likeRepository;
+  private final JwtProvider jwtProvider;
+  private final PostService postService;
+  private final AuthServiceImpl authServiceImpl;
 
   @Autowired
   public LikeServiceImpl(LikeRepository likeRepository, JwtProvider jwtProvider, PostService postService, AuthServiceImpl authServiceImpl) {

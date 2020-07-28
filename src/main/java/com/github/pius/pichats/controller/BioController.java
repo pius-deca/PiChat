@@ -18,8 +18,8 @@ import javax.validation.Valid;
 @CrossOrigin
 public class BioController {
 
-  private BioService bioService;
-  private ModelMapper modelMapper;
+  private final BioService bioService;
+  private final ModelMapper modelMapper;
 
   @Autowired
   public BioController(BioService bioService, ModelMapper modelMapper){

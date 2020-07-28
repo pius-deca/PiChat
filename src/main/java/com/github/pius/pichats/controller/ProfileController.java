@@ -18,8 +18,8 @@ import javax.validation.Valid;
 @RequestMapping("/user")
 @CrossOrigin
 public class ProfileController {
-  private ProfileService profileService;
-  private ModelMapper modelMapper;
+  private final ProfileService profileService;
+  private final ModelMapper modelMapper;
 
   @Autowired
   public ProfileController(ProfileService profileService, ModelMapper modelMapper) {

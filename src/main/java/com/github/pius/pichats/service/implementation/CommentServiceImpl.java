@@ -23,10 +23,10 @@ import java.util.List;
 
 @Service
 public class CommentServiceImpl implements CommentService {
-  private CommentRepository commentRepository;
-  private JwtProvider jwtProvider;
-  private PostService postService;
-  private AuthServiceImpl authServiceImpl;
+  private final CommentRepository commentRepository;
+  private final JwtProvider jwtProvider;
+  private final PostService postService;
+  private final AuthServiceImpl authServiceImpl;
   private final EntityPageIntoDtoPage entityPageIntoDtoPage;
 
   @Autowired

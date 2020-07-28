@@ -1,15 +1,12 @@
 package com.github.pius.pichats.service.implementation;
 
-import com.github.pius.pichats.dto.BioDTO;
 import com.github.pius.pichats.dto.ChangePasswordDTO;
 import com.github.pius.pichats.dto.UpdateRequestDTO;
 import com.github.pius.pichats.dto.UpdateResponseDTO;
 import com.github.pius.pichats.exceptions.CustomException;
-import com.github.pius.pichats.model.Bio;
 import com.github.pius.pichats.model.EmailVerification;
 import com.github.pius.pichats.model.Follow;
 import com.github.pius.pichats.model.User;
-import com.github.pius.pichats.repository.BioRepository;
 import com.github.pius.pichats.repository.EmailVerificationRepository;
 import com.github.pius.pichats.repository.FollowRepository;
 import com.github.pius.pichats.repository.UserRepository;
@@ -29,20 +26,18 @@ import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
-  private UserRepository userRepository;
-  private JwtProvider jwtProvider;
-  private PasswordEncoder passwordEncoder;
-  private BioRepository bioRepository;
-  private FollowRepository followRepository;
-  private CodeGenerator codeGenerator;
-  private EmailVerificationRepository emailVerificationRepository;
+  private final UserRepository userRepository;
+  private final JwtProvider jwtProvider;
+  private final PasswordEncoder passwordEncoder;
+  private final FollowRepository followRepository;
+  private final CodeGenerator codeGenerator;
+  private final EmailVerificationRepository emailVerificationRepository;
 
   @Autowired
-  public UserServiceImpl(UserRepository userRepository, JwtProvider jwtProvider, PasswordEncoder passwordEncoder, BioRepository bioRepository, FollowRepository followRepository, CodeGenerator codeGenerator, EmailVerificationRepository emailVerificationRepository) {
+  public UserServiceImpl(UserRepository userRepository, JwtProvider jwtProvider, PasswordEncoder passwordEncoder, FollowRepository followRepository, CodeGenerator codeGenerator, EmailVerificationRepository emailVerificationRepository) {
     this.userRepository = userRepository;
     this.jwtProvider = jwtProvider;
     this.passwordEncoder = passwordEncoder;
-    this.bioRepository = bioRepository;
     this.followRepository = followRepository;
     this.codeGenerator = codeGenerator;
     this.emailVerificationRepository = emailVerificationRepository;

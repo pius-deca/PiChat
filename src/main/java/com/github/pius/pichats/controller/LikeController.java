@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping
 @CrossOrigin
 public class LikeController {
-  private LikeService likeService;
+  private final LikeService likeService;
 
   public LikeController(LikeService likeService) {
     this.likeService = likeService;

@@ -24,9 +24,9 @@ import javax.validation.Valid;
 @RequestMapping()
 @CrossOrigin
 public class AuthController {
-  private AuthService authService;
-  private ModelMapper modelMapper;
-  private MapValidationErrorService mapValidationErrorService;
+  private final AuthService authService;
+  private final ModelMapper modelMapper;
+  private final MapValidationErrorService mapValidationErrorService;
 
   @Autowired
   public AuthController(AuthService authService, ModelMapper modelMapper, MapValidationErrorService mapValidationErrorService) {
