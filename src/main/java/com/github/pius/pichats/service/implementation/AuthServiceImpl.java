@@ -4,20 +4,16 @@ import com.github.pius.pichats.dto.LoginRequestDTO;
 import com.github.pius.pichats.dto.LoginResponseDTO;
 import com.github.pius.pichats.dto.SignupRequestDTO;
 import com.github.pius.pichats.exceptions.CustomException;
-import com.github.pius.pichats.model.Bio;
 import com.github.pius.pichats.model.EmailVerification;
 import com.github.pius.pichats.model.User;
-import com.github.pius.pichats.repository.BioRepository;
 import com.github.pius.pichats.repository.EmailVerificationRepository;
 import com.github.pius.pichats.repository.UserRepository;
 import com.github.pius.pichats.security.JwtProvider;
 import com.github.pius.pichats.service.AuthService;
 import com.github.pius.pichats.service.EmailSenderService;
 import com.github.pius.pichats.service.Utils.CodeGenerator;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.mail.MailException;
 import org.springframework.mail.MailSendException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,8 +21,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
-import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -39,17 +33,17 @@ public class AuthServiceImpl implements AuthService {
   private final AuthenticationManager authenticationManager;
   private final EmailVerificationRepository emailVerificationRepository;
   private final EmailSenderService emailSenderService;
-  private final CodeGenerator codeGenerator;
+  private final TokenService tokenService;
 
   @Autowired
-  public AuthServiceImpl(JwtProvider jwtProvider, UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, EmailVerificationRepository emailVerificationRepository, EmailSenderService emailSenderService, CodeGenerator codeGenerator) {
+  public AuthServiceImpl(JwtProvider jwtProvider, UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, EmailVerificationRepository emailVerificationRepository, EmailSenderService emailSenderService, TokenService tokenService) {
     this.jwtProvider = jwtProvider;
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.authenticationManager = authenticationManager;
     this.emailVerificationRepository = emailVerificationRepository;
     this.emailSenderService = emailSenderService;
-    this.codeGenerator = codeGenerator;
+    this.tokenService = tokenService;
   }
 
 //  @Transactional
@@ -64,7 +58,7 @@ public class AuthServiceImpl implements AuthService {
         throw new CustomException(user.getEmail() + " already exists", HttpStatus.BAD_REQUEST);
       }
 
-      String code = codeGenerator.activationToken();
+      String code = tokenService.activationToken();
        // send email to the user asynchronously
       newUser.setEmail(user.getEmail().toLowerCase());
       newUser.setFirstName(user.getFirstName());
@@ -110,8 +104,8 @@ public class AuthServiceImpl implements AuthService {
       authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
         identifier, password
       ));
-      Optional<User> authUserByEmail = userRepository.findByEmail(identifier);
-      Optional<User> authUserByUsername = userRepository.findByUsername(identifier);
+      Optional<User> authUserByEmail = userRepository.findByEmail(identifier.toLowerCase());
+      Optional<User> authUserByUsername = userRepository.findByUsername(identifier.toLowerCase());
       if (!authUserByEmail.isPresent()){
         if (authUserByUsername.isPresent()){
           LoginResponseDTO loginResponse = new LoginResponseDTO(authUserByUsername.get().getFirstName(), authUserByUsername.get().getLastName(), authUserByUsername.get().getEmail(), authUserByUsername.get().getUsername(), null);
@@ -129,4 +123,5 @@ public class AuthServiceImpl implements AuthService {
       throw new CustomException("Invalid email or username/password supplied...", HttpStatus.UNPROCESSABLE_ENTITY);
     }
   }
+
 }
