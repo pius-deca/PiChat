@@ -20,6 +20,9 @@ public class CustomException extends RuntimeException {
     this.status = status;
   }
 
+  public CustomException(String message) {
+  }
+
   public String getMessage() {
     return this.message;
   }

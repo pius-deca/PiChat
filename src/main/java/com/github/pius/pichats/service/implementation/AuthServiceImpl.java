@@ -98,14 +98,14 @@ public class AuthServiceImpl implements AuthService {
 
   @Override
   public LoginResponseDTO login(LoginRequestDTO user) {
-    String identifier = user.getIdentifier();
+    String identifier = user.getIdentifier().toLowerCase();
     String password = user.getPassword();
     try{
       authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
         identifier, password
       ));
-      Optional<User> authUserByEmail = userRepository.findByEmail(identifier.toLowerCase());
-      Optional<User> authUserByUsername = userRepository.findByUsername(identifier.toLowerCase());
+      Optional<User> authUserByEmail = userRepository.findByEmail(identifier);
+      Optional<User> authUserByUsername = userRepository.findByUsername(identifier);
       if (!authUserByEmail.isPresent()){
         if (authUserByUsername.isPresent()){
           LoginResponseDTO loginResponse = new LoginResponseDTO(authUserByUsername.get().getFirstName(), authUserByUsername.get().getLastName(), authUserByUsername.get().getEmail(), authUserByUsername.get().getUsername(), null);

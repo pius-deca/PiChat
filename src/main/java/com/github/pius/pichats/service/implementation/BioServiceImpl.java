@@ -39,7 +39,6 @@ public class BioServiceImpl implements BioService {
     Optional<Bio> userBio = bioRepository.findByUser(user);
     if (userBio.isPresent()){
       userBio.get().setDescription(bio.getDescription());
-      userBio.get().setAddress(bio.getAddress());
       userBio.get().setCountry(bio.getCountry());
       userBio.get().setDob(bio.getDob());
       userBio.get().setPhone(bio.getPhone());
@@ -47,7 +46,6 @@ public class BioServiceImpl implements BioService {
       return bioRepository.save(userBio.get());
     }
     newBio.setDescription(bio.getDescription());
-    newBio.setAddress(bio.getAddress());
     newBio.setCountry(bio.getCountry());
     newBio.setDob(bio.getDob());
     newBio.setPhone(bio.getPhone());

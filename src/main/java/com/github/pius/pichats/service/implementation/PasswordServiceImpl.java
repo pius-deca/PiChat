@@ -34,7 +34,7 @@ public class PasswordServiceImpl implements PasswordService {
   }
 
   public String forgotPassword(String identifier){
-    try {
+//    try {
       Optional<User> userByEmail = userRepository.findByEmail(identifier.toLowerCase());
       Optional<User> userByUsername = userRepository.findByUsername(identifier.toLowerCase());
       if (!userByEmail.isPresent()){
@@ -48,9 +48,9 @@ public class PasswordServiceImpl implements PasswordService {
       PasswordToken token = tokenService.generateTokenRecord(userByEmail.get());
       this.emailSenderService.sendMail(userByEmail.get().getEmail(), "Reset pichat password", "Hi "+userByEmail.get().getUsername()+"\n"+"A request was made to reset your pichat password"+ "\n"+"http://localhost:3000/account/password/reset?token="+token.getToken());
       return "Thanks! Please check your email for a link to reset your password.";
-    }catch (Exception e){
-      throw new CustomException(e.getMessage(), HttpStatus.BAD_REQUEST);
-    }
+//    }catch (Exception e){
+//      throw new CustomException(e.getMessage(), HttpStatus.BAD_REQUEST);
+//    }
   }
 
   public void resetPassword(ResetPasswordDTO resetPasswordDTO, String token){

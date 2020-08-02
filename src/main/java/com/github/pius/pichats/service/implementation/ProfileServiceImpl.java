@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -39,18 +40,6 @@ public class ProfileServiceImpl implements ProfileService {
     }
   }
 
-  // this method get a particular profile
-  protected ProfilePic getProfile(String pic) {
-    try{
-      Optional<ProfilePic> profileFound = profileRepository.findByProfilePic(pic);
-      if (profileFound.isPresent()){
-        return profileFound.get();
-      }
-      throw new CustomException("Post : "+pic+ " does not exists", HttpStatus.NOT_FOUND);
-    }catch (Exception ex){
-      throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
-    }
-  }
 
   // this method uploads and edits profile
   @Override
@@ -60,18 +49,18 @@ public class ProfileServiceImpl implements ProfileService {
       ProfilePic profile = new ProfilePic();
       Optional<ProfilePic> profilePic = profileRepository.findByUser(user);
       // upload post if username exists
-      Object uploaded = cloudService.upload(pictureFormat(pic));
+      Map uploaded = cloudService.upload(pictureFormat(pic));
       if (profilePic.isPresent()){
         // delete the previous profile before uploading a new one
         cloudService.deleteFile(profilePic.get().getProfilePic());
         profilePic.get().setProfilePic(cloudService.getFileName());
-        profilePic.get().setUrl(uploaded.toString());
+        profilePic.get().setUrl(uploaded.get("secure_url").toString());
         profileRepository.save(profilePic.get());
         return uploaded;
       }
       profile.setProfilePic(cloudService.getFileName());
       profile.setUser(user);
-      profile.setUrl(uploaded.toString());
+      profile.setUrl(uploaded.get("secure_url").toString());
       profileRepository.save(profile);
       return uploaded;
     }catch (Exception ex){
@@ -79,16 +68,30 @@ public class ProfileServiceImpl implements ProfileService {
     }
   }
 
-  // this method finds a profile that belongs to a user
-  @Override
-  public ProfilePic find(String pic, HttpServletRequest request) {
+  // this method get a particular profile
+  protected ProfilePic getProfile(String pic, HttpServletRequest request) {
     try{
       User user = jwtProvider.resolveUser(request);
-      ProfilePic profile = this.getProfile(pic);
-      if (profile.getUser().equals(user)){
-        return profile;
+      Optional<ProfilePic> profile = profileRepository.findByUser(user);
+      if (profile.isPresent()){
+        return profile.get();
       }
-      throw new CustomException(user.getUsername()+ " does not have profile "+pic, HttpStatus.NOT_FOUND);
+      throw new CustomException("Post : "+pic+ " does not exists", HttpStatus.NOT_FOUND);
+    }catch (Exception ex){
+      throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+  }
+
+  // this method finds a profile that belongs to a user
+  @Override
+  public String find(HttpServletRequest request) {
+    try{
+      User user = jwtProvider.resolveUser(request);
+      Optional<ProfilePic> profile = profileRepository.findByUser(user);
+      if (profile.isPresent()){
+        return profile.get().getUrl();
+      }
+      throw new CustomException(user.getUsername()+ " does not have a profile picture", HttpStatus.NOT_FOUND);
     }catch (Exception ex){
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
@@ -98,6 +101,6 @@ public class ProfileServiceImpl implements ProfileService {
   @Override
   public void delete(String profile, HttpServletRequest request) throws Exception {
     cloudService.deleteFile(profile);
-    profileRepository.delete(this.find(profile, request));
+    profileRepository.delete(this.getProfile(profile, request));
   }
 }

@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -62,10 +63,10 @@ public class PostServiceImpl implements PostService {
       Post newPost = new Post();
       newPost.setCaption(post.getCaption());
       // upload post if username exists
-      Object uploaded = cloudService.upload(file);
+      Map uploaded = cloudService.upload(file);
       newPost.setPost(cloudService.getFileName());
       newPost.setUser(user);
-      newPost.setUrl(uploaded.toString());
+      newPost.setUrl(uploaded.get("secure_url").toString());
       postRepository.save(newPost);
       return uploaded;
     }catch (Exception ex){
