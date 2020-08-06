@@ -23,29 +23,32 @@ public class MyUserDetails implements UserDetailsService {
 
   private UserDetails GetDetails(String identifier, String password, String role) {
     return org.springframework.security.core.userdetails.User.withUsername(identifier).password(password)
-      .authorities(new GrantedAuthority(){
-        @Override
-        public String getAuthority() {
-          return role;
-        }
-      })
-      .accountExpired(false).accountLocked(false).credentialsExpired(false)
-      .disabled(false).build();
+        .authorities(new GrantedAuthority() {
+          /**
+           *
+           */
+          private static final long serialVersionUID = 1L;
+
+          @Override
+          public String getAuthority() {
+            return role;
+          }
+        }).accountExpired(false).accountLocked(false).credentialsExpired(false).disabled(false).build();
   }
 
   @Override
   public UserDetails loadUserByUsername(String identifier) throws UsernameNotFoundException {
     Optional<User> userByEmail = userRepository.findByEmail(identifier);
-    if (!userByEmail.isPresent()){
+    if (!userByEmail.isPresent()) {
       Optional<User> userByUsername = userRepository.findByUsername(identifier);
-      if (userByUsername.isPresent()){
+      if (userByUsername.isPresent()) {
         User uUsername = userByUsername.get();
         return GetDetails(identifier, uUsername.getPassword(), "USER");
       }
-    }else {
+    } else {
       User uEmail = userByEmail.get();
       return GetDetails(identifier, uEmail.getPassword(), "USER");
     }
-    throw new UsernameNotFoundException("User with '"+identifier+"' not found");
+    throw new UsernameNotFoundException("User with '" + identifier + "' not found");
   }
 }

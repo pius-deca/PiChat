@@ -22,20 +22,20 @@ import javax.validation.Valid;
 @CrossOrigin
 public class AuthController {
   private final AuthService authService;
-  private final ModelMapper modelMapper;
   private final MapValidationErrorService mapValidationErrorService;
 
   @Autowired
-  public AuthController(AuthService authService, ModelMapper modelMapper, MapValidationErrorService mapValidationErrorService) {
+  public AuthController(AuthService authService, ModelMapper modelMapper,
+      MapValidationErrorService mapValidationErrorService) {
     this.authService = authService;
-    this.modelMapper = modelMapper;
     this.mapValidationErrorService = mapValidationErrorService;
   }
 
   @PostMapping("/auth/signup")
-  public ResponseEntity<?> signUp(@Valid @RequestBody SignupRequestDTO user, BindingResult bindingResult) throws Exception {
+  public ResponseEntity<?> signUp(@Valid @RequestBody SignupRequestDTO user, BindingResult bindingResult)
+      throws Exception {
     ResponseEntity<?> errorMap = mapValidationErrorService.MapValidationService(bindingResult);
-    if (errorMap != null){
+    if (errorMap != null) {
       return errorMap;
     }
     AuthResponseDTO createdUser = authService.register(user);
@@ -46,7 +46,7 @@ public class AuthController {
   }
 
   @GetMapping("/user/activate")
-  public ResponseEntity<?> activate(@RequestParam("code") String code, HttpServletRequest request){
+  public ResponseEntity<?> activate(@RequestParam("code") String code, HttpServletRequest request) {
     String activated = authService.activate(code, request);
     ApiResponse<User> response = new ApiResponse<>(HttpStatus.OK);
     response.setMessage(activated);
@@ -54,9 +54,9 @@ public class AuthController {
   }
 
   @PostMapping("/auth/login")
-  public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDTO user, BindingResult bindingResult){
+  public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDTO user, BindingResult bindingResult) {
     ResponseEntity<?> errorMap = mapValidationErrorService.MapValidationService(bindingResult);
-    if (errorMap != null){
+    if (errorMap != null) {
       return errorMap;
     }
     AuthResponseDTO loginResponse = authService.login(user);

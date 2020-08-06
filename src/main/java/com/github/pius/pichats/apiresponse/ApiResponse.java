@@ -69,7 +69,7 @@ public class ApiResponse<T> {
 
   private void addValidationError(FieldError fieldError) {
     this.addValidationError(fieldError.getObjectName(), fieldError.getField(), fieldError.getRejectedValue(),
-      fieldError.getDefaultMessage());
+        fieldError.getDefaultMessage());
   }
 
   public void addValidationErrors(List<FieldError> fieldErrors) {
@@ -92,7 +92,7 @@ public class ApiResponse<T> {
    */
   private void addValidationError(ConstraintViolation<?> cv) {
     this.addValidationError(cv.getRootBeanClass().getSimpleName(),
-      ((PathImpl) cv.getPropertyPath()).getLeafNode().asString(), cv.getInvalidValue(), cv.getMessage());
+        ((PathImpl) cv.getPropertyPath()).getLeafNode().asString(), cv.getInvalidValue(), cv.getMessage());
   }
 
   public void addValidationErrors(Set<ConstraintViolation<?>> constraintViolations) {

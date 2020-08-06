@@ -1,25 +1,26 @@
 package com.github.pius.pichats.models;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import javax.validation.Validation;
+import javax.validation.ValidatorFactory;
+
 import com.github.pius.pichats.model.Bio;
 import com.github.pius.pichats.model.User;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BioTest {
   private final static Bio bio = new Bio();
   private final static User user = new User();
-  private static Validator validator;
 
   @BeforeAll
   static void initAll() {
     ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-    validator = factory.getValidator();
+    factory.getValidator();
 
     user.setFirstName("firstname");
     user.setLastName("lastname");

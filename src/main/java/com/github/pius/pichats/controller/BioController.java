@@ -22,13 +22,13 @@ public class BioController {
   private final ModelMapper modelMapper;
 
   @Autowired
-  public BioController(BioService bioService, ModelMapper modelMapper){
+  public BioController(BioService bioService, ModelMapper modelMapper) {
     this.bioService = bioService;
     this.modelMapper = modelMapper;
   }
 
   @PostMapping("/user/bio")
-  public ResponseEntity<ApiResponse<Bio>> addBio(@Valid @RequestBody BioDTO bio, HttpServletRequest request){
+  public ResponseEntity<ApiResponse<Bio>> addBio(@Valid @RequestBody BioDTO bio, HttpServletRequest request) {
     Bio newBio = bioService.addOrUpdate(modelMapper.map(bio, Bio.class), request);
     ApiResponse<Bio> response = new ApiResponse<>(HttpStatus.CREATED);
     response.setData(newBio);
@@ -37,7 +37,7 @@ public class BioController {
   }
 
   @GetMapping("/user/bio")
-  public ResponseEntity<ApiResponse<Bio>> getBio(HttpServletRequest request){
+  public ResponseEntity<ApiResponse<Bio>> getBio(HttpServletRequest request) {
     Bio foundBio = bioService.find(request);
     ApiResponse<Bio> response = new ApiResponse<>(HttpStatus.OK);
     response.setData(foundBio);

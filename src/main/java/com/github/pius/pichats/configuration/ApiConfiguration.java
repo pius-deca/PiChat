@@ -1,6 +1,7 @@
 package com.github.pius.pichats.configuration;
 
-import com.github.pius.pichats.security.JwtFilter;
+import java.util.Properties;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -9,8 +10,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.util.Properties;
 
 @Configuration
 public class ApiConfiguration {
@@ -26,7 +25,7 @@ public class ApiConfiguration {
   }
 
   @Bean
-  PasswordEncoder passwordEncoder(){
+  PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
   }
 

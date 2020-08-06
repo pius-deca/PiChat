@@ -1,5 +1,7 @@
 package com.github.pius.pichats.service.implementation;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.github.pius.pichats.dto.CommentResponseDTO;
 import com.github.pius.pichats.exceptions.CustomException;
 import com.github.pius.pichats.model.Comment;
@@ -11,6 +13,7 @@ import com.github.pius.pichats.service.CommentService;
 import com.github.pius.pichats.service.PostService;
 import com.github.pius.pichats.service.Utils.EntityPageIntoDtoPage;
 import com.github.pius.pichats.service.Utils.PageResultConverter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,31 +21,28 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-
 @Service
 public class CommentServiceImpl implements CommentService {
   private final CommentRepository commentRepository;
   private final JwtProvider jwtProvider;
   private final PostService postService;
-  private final AuthServiceImpl authServiceImpl;
   private final EntityPageIntoDtoPage entityPageIntoDtoPage;
 
   @Autowired
-  public CommentServiceImpl(CommentRepository commentRepository, JwtProvider jwtProvider, PostService postService, AuthServiceImpl authServiceImpl, EntityPageIntoDtoPage entityPageIntoDtoPage) {
+  public CommentServiceImpl(CommentRepository commentRepository, JwtProvider jwtProvider, PostService postService,
+      EntityPageIntoDtoPage entityPageIntoDtoPage) {
     this.commentRepository = commentRepository;
     this.jwtProvider = jwtProvider;
     this.postService = postService;
-    this.authServiceImpl = authServiceImpl;
     this.entityPageIntoDtoPage = entityPageIntoDtoPage;
   }
 
-  // this method enables a user find a post made by any user and make comments on it
+  // this method enables a user find a post made by any user and make comments on
+  // it
   @Override
   public Comment makeComment(String post, Comment comment, HttpServletRequest request) {
-    try{
-//      authServiceImpl.isAccountActive(request);
+    try {
+      // authServiceImpl.isAccountActive(request);
       User user = jwtProvider.resolveUser(request);
       // find any post to comment on
       Post postFound = postService.getPost(post);
@@ -51,7 +51,7 @@ public class CommentServiceImpl implements CommentService {
       newComment.setPost(postFound);
       newComment.setUser(user);
       return commentRepository.save(newComment);
-    }catch (Exception ex){
+    } catch (Exception ex) {
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
   }
@@ -59,14 +59,17 @@ public class CommentServiceImpl implements CommentService {
   // this method finds a post user has made and get all comments on the post
   @Override
   public PageResultConverter getAllCommentsForAPost(int page, int limit, String post, HttpServletRequest request) {
-//    authServiceImpl.isAccountActive(request);
-    if (page > 0) page--;
+    // authServiceImpl.isAccountActive(request);
+    if (page > 0)
+      page--;
 
     Pageable pageable = PageRequest.of(page, limit);
 
-    Page<Comment> entities = commentRepository.findByPostOrderByCreatedAtDesc(pageable, postService.findPost(post, request));
+    Page<Comment> entities = commentRepository.findByPostOrderByCreatedAtDesc(pageable,
+        postService.findPost(post, request));
 
-    Page<CommentResponseDTO> response = entityPageIntoDtoPage.mapEntityPageIntoDtoPage(entities, CommentResponseDTO.class);
+    Page<CommentResponseDTO> response = entityPageIntoDtoPage.mapEntityPageIntoDtoPage(entities,
+        CommentResponseDTO.class);
 
     response.stream().forEach(res -> {
       res.setComment(res.getComment());
@@ -78,7 +81,7 @@ public class CommentServiceImpl implements CommentService {
 
   @Override
   public int countPostComments(String post, HttpServletRequest request) {
-//    authServiceImpl.isAccountActive(request);
+    // authServiceImpl.isAccountActive(request);
     Post postFound = postService.findPost(post, request);
     return commentRepository.countCommentsByPost(postFound);
   }

@@ -35,7 +35,9 @@ public class AuthServiceImpl implements AuthService {
   private final TokenService tokenService;
 
   @Autowired
-  public AuthServiceImpl(JwtProvider jwtProvider, UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, EmailVerificationRepository emailVerificationRepository, EmailSenderService emailSenderService, TokenService tokenService) {
+  public AuthServiceImpl(JwtProvider jwtProvider, UserRepository userRepository, PasswordEncoder passwordEncoder,
+      AuthenticationManager authenticationManager, EmailVerificationRepository emailVerificationRepository,
+      EmailSenderService emailSenderService, TokenService tokenService) {
     this.jwtProvider = jwtProvider;
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
@@ -45,20 +47,20 @@ public class AuthServiceImpl implements AuthService {
     this.tokenService = tokenService;
   }
 
-//  @Transactional
+  // @Transactional
   @Override
-  public AuthResponseDTO register(SignupRequestDTO user) throws Exception{
-    try{
+  public AuthResponseDTO register(SignupRequestDTO user) throws Exception {
+    try {
       User newUser = new User();
-      if (userRepository.existsByUsername(user.getUsername().toLowerCase())){
+      if (userRepository.existsByUsername(user.getUsername().toLowerCase())) {
         throw new CustomException(user.getUsername() + " already exists", HttpStatus.BAD_REQUEST);
       }
-      if (userRepository.existsByEmail(user.getEmail().toLowerCase())){
+      if (userRepository.existsByEmail(user.getEmail().toLowerCase())) {
         throw new CustomException(user.getEmail() + " already exists", HttpStatus.BAD_REQUEST);
       }
 
       String code = tokenService.activationToken();
-       // send email to the user asynchronously
+      // send email to the user asynchronously
       newUser.setEmail(user.getEmail().toLowerCase());
       newUser.setFirstName(user.getFirstName());
       newUser.setLastName(user.getLastName());
@@ -69,13 +71,16 @@ public class AuthServiceImpl implements AuthService {
       em.setCode(code);
       em.setUser(newUser);
       emailVerificationRepository.save(em);
-//        this.emailSenderService.sendMail(newUser.getEmail(), "Activate pichat account", "Use the code below to activate your pichat account"+ "\n"+code);
+      this.emailSenderService.sendMail(newUser.getEmail(), "Activate pichat account",
+          "Use the code below to activate your pichat account" + "\n code - " + code);
       newUser = userRepository.save(newUser);
-      AuthResponseDTO signupResponse = new AuthResponseDTO(newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), newUser.getUsername(), null, false, newUser.getId(), newUser.getCreatedAt(), newUser.getUpdatedAt());
+      AuthResponseDTO signupResponse = new AuthResponseDTO(newUser.getFirstName(), newUser.getLastName(),
+          newUser.getEmail(), newUser.getUsername(), null, false, newUser.getId(), newUser.getCreatedAt(),
+          newUser.getUpdatedAt());
       String token = jwtProvider.createToken(signupResponse.getUsername());
       signupResponse.setToken(token);
       return signupResponse;
-    } catch (MailSendException ex){
+    } catch (MailSendException ex) {
       throw new CustomException(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
   }
@@ -84,7 +89,7 @@ public class AuthServiceImpl implements AuthService {
   public String activate(String code, HttpServletRequest request) {
     User user = jwtProvider.resolveUser(request);
     Optional<EmailVerification> em = emailVerificationRepository.findByCodeAndUser(code, user);
-    if (!em.isPresent()){
+    if (!em.isPresent()) {
       throw new CustomException("Activation code is wrong", HttpStatus.BAD_REQUEST);
     }
     EmailVerification e = em.get();
@@ -100,35 +105,32 @@ public class AuthServiceImpl implements AuthService {
   public AuthResponseDTO login(LoginRequestDTO user) {
     String identifier = user.getIdentifier().toLowerCase();
     String password = user.getPassword();
-    try{
-      authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-        identifier, password
-      ));
+    try {
+      authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(identifier, password));
       Optional<User> authUserByEmail = userRepository.findByEmail(identifier);
       Optional<User> authUserByUsername = userRepository.findByUsername(identifier);
-      if (!authUserByEmail.isPresent()){
-        if (authUserByUsername.isPresent()){
-          AuthResponseDTO loginResponse = new AuthResponseDTO(authUserByUsername.get().getFirstName(), authUserByUsername.get().getLastName(), authUserByUsername.get().getEmail(), authUserByUsername.get().getUsername(), null, false, authUserByUsername.get().getId(), authUserByUsername.get().getCreatedAt(), authUserByUsername.get().getUpdatedAt());
+      if (!authUserByEmail.isPresent()) {
+        if (authUserByUsername.isPresent()) {
+          AuthResponseDTO loginResponse = new AuthResponseDTO(authUserByUsername.get().getFirstName(),
+              authUserByUsername.get().getLastName(), authUserByUsername.get().getEmail(),
+              authUserByUsername.get().getUsername(), null, false, authUserByUsername.get().getId(),
+              authUserByUsername.get().getCreatedAt(), authUserByUsername.get().getUpdatedAt());
           String token = jwtProvider.createToken(loginResponse.getUsername());
           loginResponse.setToken(token);
           return loginResponse;
         }
         throw new CustomException("Invalid email or username/password supplied...", HttpStatus.UNPROCESSABLE_ENTITY);
       }
-      AuthResponseDTO loginResponse = new AuthResponseDTO(authUserByEmail.get().getFirstName(), authUserByEmail.get().getLastName(), authUserByEmail.get().getEmail(), authUserByEmail.get().getUsername(), null, false, authUserByEmail.get().getId(), authUserByEmail.get().getCreatedAt(), authUserByEmail.get().getUpdatedAt());
+      AuthResponseDTO loginResponse = new AuthResponseDTO(authUserByEmail.get().getFirstName(),
+          authUserByEmail.get().getLastName(), authUserByEmail.get().getEmail(), authUserByEmail.get().getUsername(),
+          null, false, authUserByEmail.get().getId(), authUserByEmail.get().getCreatedAt(),
+          authUserByEmail.get().getUpdatedAt());
       String token = jwtProvider.createToken(loginResponse.getUsername());
       loginResponse.setToken(token);
       return loginResponse;
-    } catch (Exception ex){
+    } catch (Exception ex) {
       throw new CustomException("Invalid email or username/password supplied...", HttpStatus.UNPROCESSABLE_ENTITY);
     }
-  }
-
-  private AuthResponseDTO getAuthLoginResponse(Optional<User> authUserByEmail) {
-    AuthResponseDTO loginResponse = new AuthResponseDTO(authUserByEmail.get().getFirstName(), authUserByEmail.get().getLastName(), authUserByEmail.get().getEmail(), authUserByEmail.get().getUsername(), null, false, authUserByEmail.get().getId(), authUserByEmail.get().getCreatedAt(), authUserByEmail.get().getUpdatedAt());
-    String token = jwtProvider.createToken(loginResponse.getUsername());
-    loginResponse.setToken(token);
-    return loginResponse;
   }
 
 }

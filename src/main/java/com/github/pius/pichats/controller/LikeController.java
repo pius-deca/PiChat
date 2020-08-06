@@ -20,7 +20,8 @@ public class LikeController {
   }
 
   @PostMapping("/post/{postId}/like")
-  public ResponseEntity<ApiResponse<Like>> comment(@PathVariable(name = "postId") String post, HttpServletRequest request){
+  public ResponseEntity<ApiResponse<Like>> comment(@PathVariable(name = "postId") String post,
+      HttpServletRequest request) {
     Like newLike = likeService.likeOrUnlike(post, request);
     ApiResponse<Like> response = new ApiResponse<>(HttpStatus.CREATED);
     response.setData(newLike);
@@ -29,11 +30,12 @@ public class LikeController {
   }
 
   @GetMapping("/post/{postId}/likes/count")
-  public ResponseEntity<ApiResponse<Integer>> countLikes(@PathVariable(name = "postId") String post, HttpServletRequest request){
+  public ResponseEntity<ApiResponse<Integer>> countLikes(@PathVariable(name = "postId") String post,
+      HttpServletRequest request) {
     int numOfLikes = likeService.countPostLikes(post, request);
     ApiResponse<Integer> response = new ApiResponse<>(HttpStatus.OK);
     response.setData(numOfLikes);
-    response.setMessage("All likes have been counted for post of id : "+post);
+    response.setMessage("All likes have been counted for post of id : " + post);
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 }

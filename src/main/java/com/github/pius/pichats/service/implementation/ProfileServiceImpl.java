@@ -31,26 +31,26 @@ public class ProfileServiceImpl implements ProfileService {
   }
 
   // this method validates picture format
-  protected static MultipartFile pictureFormat(MultipartFile pic){
+  protected static MultipartFile pictureFormat(MultipartFile pic) {
     if (Objects.requireNonNull(pic.getOriginalFilename()).endsWith(".jpg") || pic.getOriginalFilename().endsWith(".JPG")
-      || pic.getOriginalFilename().endsWith(".png") || pic.getOriginalFilename().endsWith(".PNG") || pic.getOriginalFilename().endsWith(".jpeg") || pic.getOriginalFilename().endsWith(".JPEG")){
+        || pic.getOriginalFilename().endsWith(".png") || pic.getOriginalFilename().endsWith(".PNG")
+        || pic.getOriginalFilename().endsWith(".jpeg") || pic.getOriginalFilename().endsWith(".JPEG")) {
       return pic;
-    }else{
+    } else {
       throw new CustomException("Profile picture must be picture format", HttpStatus.BAD_REQUEST);
     }
   }
 
-
   // this method uploads and edits profile
   @Override
   public Object uploadProfile(MultipartFile pic, HttpServletRequest request) {
-    try{
+    try {
       User user = jwtProvider.resolveUser(request);
       ProfilePic profile = new ProfilePic();
       Optional<ProfilePic> profilePic = profileRepository.findByUser(user);
       // upload post if username exists
       Map uploaded = cloudService.upload(pictureFormat(pic));
-      if (profilePic.isPresent()){
+      if (profilePic.isPresent()) {
         // delete the previous profile before uploading a new one
         cloudService.deleteFile(profilePic.get().getProfilePic());
         profilePic.get().setProfilePic(cloudService.getFileName());
@@ -63,36 +63,36 @@ public class ProfileServiceImpl implements ProfileService {
       profile.setUrl(uploaded.get("secure_url").toString());
       profileRepository.save(profile);
       return uploaded;
-    }catch (Exception ex){
+    } catch (Exception ex) {
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
   }
 
   // this method get a particular profile
   protected ProfilePic getProfile(String pic, HttpServletRequest request) {
-    try{
+    try {
       User user = jwtProvider.resolveUser(request);
       Optional<ProfilePic> profile = profileRepository.findByUser(user);
-      if (profile.isPresent()){
+      if (profile.isPresent()) {
         return profile.get();
       }
-      throw new CustomException("Post : "+pic+ " does not exists", HttpStatus.NOT_FOUND);
-    }catch (Exception ex){
+      throw new CustomException("Post : " + pic + " does not exists", HttpStatus.NOT_FOUND);
+    } catch (Exception ex) {
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
   }
 
   // this method finds a profile that belongs to a user
   @Override
-  public String find(HttpServletRequest request) {
-    try{
+  public ProfilePic find(HttpServletRequest request) {
+    try {
       User user = jwtProvider.resolveUser(request);
       Optional<ProfilePic> profile = profileRepository.findByUser(user);
-      if (profile.isPresent()){
-        return profile.get().getUrl();
+      if (profile.isPresent()) {
+        return profile.get();
       }
-      throw new CustomException(user.getUsername()+ " does not have a profile picture", HttpStatus.NOT_FOUND);
-    }catch (Exception ex){
+      throw new CustomException(user.getUsername() + " does not have a profile picture", HttpStatus.NOT_FOUND);
+    } catch (Exception ex) {
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
   }
