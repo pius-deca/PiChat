@@ -4,9 +4,9 @@ server:
     context-path: /api/v1
 spring:
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://${DB_HOST:localhost}:5432/pichat}
-    username: ${SPRING_DATASOURCE_USERNAME:postgres}
-    password: ${SPRING_DATASOURCE_PASSWORD:1996}
+    url: ${DATABASE_URL:postgres://btcvyfkhfmuxaq:33c337a86f6de18614dec82228c8abe68b24bf7b6f1cae76c6ab229d63bc02b6@ec2-54-246-87-132.eu-west-1.compute.amazonaws.com:5432/d39bp1jdebd7fh}
+#    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+#    password: ${SPRING_DATASOURCE_PASSWORD:1996}
     initialization-mode: always
     driverClassName: org.postgresql.Driver
     continue-on-error: true
