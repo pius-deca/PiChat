@@ -36,17 +36,17 @@ public class ProfileController {
     return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
 
-  @GetMapping("/profile/{pic}")
-  public ResponseEntity<ApiResponse<ProfilePic>> findProfile(@PathVariable(name = "pic") String profile, HttpServletRequest request){
-    ProfilePic newProfile = profileService.find(profile, request);
-    ApiResponse<ProfilePic> response = new ApiResponse<>(HttpStatus.OK);
+  @GetMapping("/profile")
+  public ResponseEntity<ApiResponse<String>> findProfile(HttpServletRequest request){
+    String newProfile = profileService.find(request);
+    ApiResponse<String> response = new ApiResponse<>(HttpStatus.OK);
     response.setData(newProfile);
     response.setMessage("Profile picture found");
     return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
 
-  @DeleteMapping("/profile/{pic}")
-  public ResponseEntity<ApiResponse<String>> deleteProfile(@PathVariable(name = "pic") String profile, HttpServletRequest request) throws Exception {
+  @DeleteMapping("/profile")
+  public ResponseEntity<ApiResponse<String>> deleteProfile(@RequestParam(name = "pic") String profile, HttpServletRequest request) throws Exception {
     profileService.delete(profile, request);
     ApiResponse<String> response = new ApiResponse<>(HttpStatus.OK);
     response.setMessage("Profile picture has been deleted");

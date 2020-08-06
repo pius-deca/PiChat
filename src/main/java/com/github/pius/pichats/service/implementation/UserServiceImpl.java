@@ -137,7 +137,7 @@ public class UserServiceImpl implements UserService {
       }
       // save the follows table
       followRepository.saveAll(followList);
-      return new UpdateResponseDTO(updatedUser.getFirstName(), updatedUser.getLastName(), updatedUser.getEmail(), updatedUser.getUsername(), null, updateRequestDTO.getToken());
+      return new UpdateResponseDTO(updatedUser.getFirstName(), updatedUser.getLastName(), updatedUser.getEmail(), updatedUser.getUsername(), null, updatedUser.isActive(), updateRequestDTO.getToken(), updatedUser.getId(), updatedUser.getCreatedAt(), updatedUser.getUpdatedAt());
     } catch (Exception e) {
       throw new CustomException("Error trying to update '"+user.getUsername()+"'", HttpStatus.BAD_REQUEST);
     }

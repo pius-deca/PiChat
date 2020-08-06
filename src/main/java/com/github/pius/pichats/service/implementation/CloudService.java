@@ -34,7 +34,7 @@ public class CloudService {
     this.imageFolder = imageFolder;
   }
 
-  public Object upload(MultipartFile file) throws Exception {
+  public Map upload(MultipartFile file) throws Exception {
     try {
       String num = RandomStringUtils.randomNumeric(5);
       Path filepath = Paths.get(Objects.requireNonNull(file.getOriginalFilename()));
@@ -55,7 +55,7 @@ public class CloudService {
         Map params = ObjectUtils.asMap("public_id", folder + getFileName(),
           "resource_type", resource_type);
         Map out = cloudConfiguration.configCloud().uploader().upload(toUpload, params);
-        return out.get("secure_url");
+        return out;
       }catch (IOException ex){
         throw new Exception(ex.getMessage());
       }
