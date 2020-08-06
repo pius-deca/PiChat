@@ -1,5 +1,6 @@
 package com.github.pius.pichats.service.implementation;
 
+import com.github.pius.pichats.dto.ForgotPassDTO;
 import com.github.pius.pichats.dto.ResetPasswordDTO;
 import com.github.pius.pichats.exceptions.CustomException;
 import com.github.pius.pichats.model.PasswordToken;
@@ -33,10 +34,11 @@ public class PasswordServiceImpl implements PasswordService {
     this.passwordEncoder = passwordEncoder;
   }
 
-  public String forgotPassword(String identifier){
-//    try {
-      Optional<User> userByEmail = userRepository.findByEmail(identifier.toLowerCase());
-      Optional<User> userByUsername = userRepository.findByUsername(identifier.toLowerCase());
+  public String forgotPassword(ForgotPassDTO forgotPassDTO){
+    String identifier = forgotPassDTO.getIdentifier().toLowerCase();
+    try {
+      Optional<User> userByEmail = userRepository.findByEmail(identifier);
+      Optional<User> userByUsername = userRepository.findByUsername(identifier);
       if (!userByEmail.isPresent()){
         if (userByUsername.isPresent()){
           PasswordToken token = tokenService.generateTokenRecord(userByUsername.get());
@@ -48,12 +50,12 @@ public class PasswordServiceImpl implements PasswordService {
       PasswordToken token = tokenService.generateTokenRecord(userByEmail.get());
       this.emailSenderService.sendMail(userByEmail.get().getEmail(), "Reset pichat password", "Hi "+userByEmail.get().getUsername()+"\n"+"A request was made to reset your pichat password"+ "\n"+"http://localhost:3000/account/password/reset?token="+token.getToken());
       return "Thanks! Please check your email for a link to reset your password.";
-//    }catch (Exception e){
-//      throw new CustomException(e.getMessage(), HttpStatus.BAD_REQUEST);
-//    }
+    }catch (Exception e){
+      throw new CustomException(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
   }
 
-  public void resetPassword(ResetPasswordDTO resetPasswordDTO, String token){
+  public String resetPassword(ResetPasswordDTO resetPasswordDTO, String token){
     String password = resetPasswordDTO.getPassword();
     String confirmPassword = resetPasswordDTO.getConfirmPassword();
 
@@ -74,6 +76,7 @@ public class PasswordServiceImpl implements PasswordService {
     }
     user.setPassword(passwordEncoder.encode(password));
     userRepository.save(user);
+    return "Password has been changed, please log in";
   }
 
 }

@@ -1,7 +1,7 @@
 package com.github.pius.pichats.service.implementation;
 
 import com.github.pius.pichats.dto.LoginRequestDTO;
-import com.github.pius.pichats.dto.LoginResponseDTO;
+import com.github.pius.pichats.dto.AuthResponseDTO;
 import com.github.pius.pichats.dto.SignupRequestDTO;
 import com.github.pius.pichats.exceptions.CustomException;
 import com.github.pius.pichats.model.EmailVerification;
@@ -11,7 +11,6 @@ import com.github.pius.pichats.repository.UserRepository;
 import com.github.pius.pichats.security.JwtProvider;
 import com.github.pius.pichats.service.AuthService;
 import com.github.pius.pichats.service.EmailSenderService;
-import com.github.pius.pichats.service.Utils.CodeGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.MailSendException;
@@ -48,7 +47,7 @@ public class AuthServiceImpl implements AuthService {
 
 //  @Transactional
   @Override
-  public User register(SignupRequestDTO user) throws Exception{
+  public AuthResponseDTO register(SignupRequestDTO user) throws Exception{
     try{
       User newUser = new User();
       if (userRepository.existsByUsername(user.getUsername().toLowerCase())){
@@ -71,10 +70,11 @@ public class AuthServiceImpl implements AuthService {
       em.setUser(newUser);
       emailVerificationRepository.save(em);
 //        this.emailSenderService.sendMail(newUser.getEmail(), "Activate pichat account", "Use the code below to activate your pichat account"+ "\n"+code);
-//      Bio bio = new Bio();
-//      bio.setUser(newUser);
-//      bioRepository.save(bio);
-      return userRepository.save(newUser);
+      newUser = userRepository.save(newUser);
+      AuthResponseDTO signupResponse = new AuthResponseDTO(newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), newUser.getUsername(), null, false, newUser.getId(), newUser.getCreatedAt(), newUser.getUpdatedAt());
+      String token = jwtProvider.createToken(signupResponse.getUsername());
+      signupResponse.setToken(token);
+      return signupResponse;
     } catch (MailSendException ex){
       throw new CustomException(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
@@ -97,7 +97,7 @@ public class AuthServiceImpl implements AuthService {
   }
 
   @Override
-  public LoginResponseDTO login(LoginRequestDTO user) {
+  public AuthResponseDTO login(LoginRequestDTO user) {
     String identifier = user.getIdentifier().toLowerCase();
     String password = user.getPassword();
     try{
@@ -108,20 +108,27 @@ public class AuthServiceImpl implements AuthService {
       Optional<User> authUserByUsername = userRepository.findByUsername(identifier);
       if (!authUserByEmail.isPresent()){
         if (authUserByUsername.isPresent()){
-          LoginResponseDTO loginResponse = new LoginResponseDTO(authUserByUsername.get().getFirstName(), authUserByUsername.get().getLastName(), authUserByUsername.get().getEmail(), authUserByUsername.get().getUsername(), null);
+          AuthResponseDTO loginResponse = new AuthResponseDTO(authUserByUsername.get().getFirstName(), authUserByUsername.get().getLastName(), authUserByUsername.get().getEmail(), authUserByUsername.get().getUsername(), null, false, authUserByUsername.get().getId(), authUserByUsername.get().getCreatedAt(), authUserByUsername.get().getUpdatedAt());
           String token = jwtProvider.createToken(loginResponse.getUsername());
           loginResponse.setToken(token);
           return loginResponse;
         }
         throw new CustomException("Invalid email or username/password supplied...", HttpStatus.UNPROCESSABLE_ENTITY);
       }
-      LoginResponseDTO loginResponse = new LoginResponseDTO(authUserByEmail.get().getFirstName(), authUserByEmail.get().getLastName(), authUserByEmail.get().getEmail(), authUserByEmail.get().getUsername(), null);
+      AuthResponseDTO loginResponse = new AuthResponseDTO(authUserByEmail.get().getFirstName(), authUserByEmail.get().getLastName(), authUserByEmail.get().getEmail(), authUserByEmail.get().getUsername(), null, false, authUserByEmail.get().getId(), authUserByEmail.get().getCreatedAt(), authUserByEmail.get().getUpdatedAt());
       String token = jwtProvider.createToken(loginResponse.getUsername());
       loginResponse.setToken(token);
       return loginResponse;
     } catch (Exception ex){
       throw new CustomException("Invalid email or username/password supplied...", HttpStatus.UNPROCESSABLE_ENTITY);
     }
+  }
+
+  private AuthResponseDTO getAuthLoginResponse(Optional<User> authUserByEmail) {
+    AuthResponseDTO loginResponse = new AuthResponseDTO(authUserByEmail.get().getFirstName(), authUserByEmail.get().getLastName(), authUserByEmail.get().getEmail(), authUserByEmail.get().getUsername(), null, false, authUserByEmail.get().getId(), authUserByEmail.get().getCreatedAt(), authUserByEmail.get().getUpdatedAt());
+    String token = jwtProvider.createToken(loginResponse.getUsername());
+    loginResponse.setToken(token);
+    return loginResponse;
   }
 
 }

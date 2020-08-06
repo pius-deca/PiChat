@@ -11,10 +11,11 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @Data
 public class ResetPasswordDTO {
-  @NotBlank(message = "password must be valid")
+  @NotBlank(message = "Password cannot be empty")
+  @Size(min = 8, max = 16, message = "Password must be between 8 to 16 characters long")
   private String password;
 
-  @NotBlank(message = "Confirm new password")
+  @NotBlank(message = "Confirm password cannot be empty")
   private String confirmPassword;
 
 }

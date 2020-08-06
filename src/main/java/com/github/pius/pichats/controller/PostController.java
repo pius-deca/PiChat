@@ -29,7 +29,7 @@ public class PostController {
   }
 
   @PostMapping(value = "/post")
-  public ResponseEntity<ApiResponse<Object>> post(@Valid @RequestParam("post") PostDTO post, @RequestParam("file") MultipartFile file, HttpServletRequest request){
+  public ResponseEntity<ApiResponse<Object>> post(@Valid @RequestBody PostDTO post, @RequestParam("file") MultipartFile file, HttpServletRequest request){
     Object newPost = postService.post(post, file, request);
     ApiResponse<Object> response = new ApiResponse<>(HttpStatus.CREATED);
     response.setData(newPost);
