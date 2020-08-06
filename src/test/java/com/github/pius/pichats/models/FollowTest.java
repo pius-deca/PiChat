@@ -1,32 +1,28 @@
 package com.github.pius.pichats.models;
 
-import com.github.pius.pichats.model.Comment;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
+import javax.validation.Validation;
+import javax.validation.ValidatorFactory;
+
 import com.github.pius.pichats.model.Follow;
-import com.github.pius.pichats.model.Post;
 import com.github.pius.pichats.model.User;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 public class FollowTest {
   private final static Follow follow = new Follow();
   private final static User user1 = new User();
   private final static User user2 = new User();
-  private static Validator validator;
 
   @BeforeAll
   static void initAll() {
     ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-    validator = factory.getValidator();
+    factory.getValidator();
 
     user1.setFirstName("firstname");
     user1.setLastName("lastname");

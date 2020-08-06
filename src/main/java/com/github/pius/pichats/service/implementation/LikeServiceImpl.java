@@ -20,23 +20,21 @@ public class LikeServiceImpl implements LikeService {
   private final LikeRepository likeRepository;
   private final JwtProvider jwtProvider;
   private final PostService postService;
-  private final AuthServiceImpl authServiceImpl;
 
   @Autowired
-  public LikeServiceImpl(LikeRepository likeRepository, JwtProvider jwtProvider, PostService postService, AuthServiceImpl authServiceImpl) {
+  public LikeServiceImpl(LikeRepository likeRepository, JwtProvider jwtProvider, PostService postService) {
     this.likeRepository = likeRepository;
     this.jwtProvider = jwtProvider;
     this.postService = postService;
-    this.authServiceImpl = authServiceImpl;
   }
 
   // this method enables a user likes or unlikes a post made by any user
   @Override
   public Like likeOrUnlike(String post, HttpServletRequest request) {
-    try{
-//      authServiceImpl.isAccountActive(request);
+    try {
+      // authServiceImpl.isAccountActive(request);
       User user = jwtProvider.resolveUser(request);
-      if (user.isActive()){
+      if (user.isActive()) {
         // find any post to like
         Post postFound = postService.getPost(post);
         Like newLike = new Like();
@@ -44,15 +42,15 @@ public class LikeServiceImpl implements LikeService {
         return this.saveLike(user, postFound, newLike, foundLike);
       }
       throw new CustomException("Your account is yet to be activated", HttpStatus.UNAUTHORIZED);
-    }catch (Exception ex){
+    } catch (Exception ex) {
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
   }
 
   // this method likes or unlikes
   private Like saveLike(User user, Post postFound, Like newLike, Optional<Like> foundLike) {
-    if (foundLike.isPresent()){
-      if (foundLike.get().isLikes()){
+    if (foundLike.isPresent()) {
+      if (foundLike.get().isLikes()) {
         foundLike.get().setLikes(false);
         return likeRepository.save(foundLike.get());
       }
@@ -67,12 +65,12 @@ public class LikeServiceImpl implements LikeService {
 
   @Override
   public int countPostLikes(String post, HttpServletRequest request) {
-//    authServiceImpl.isAccountActive(request);
+    // authServiceImpl.isAccountActive(request);
     Post postFound = postService.findPost(post, request);
     Optional<Like> like = likeRepository.findByPost(postFound);
     int numOfLikes = 0;
-    if (like.isPresent()){
-      if (like.get().isLikes()){
+    if (like.isPresent()) {
+      if (like.get().isLikes()) {
         numOfLikes = likeRepository.countLikesByPost(postFound);
       }
     }

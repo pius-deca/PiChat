@@ -1,30 +1,30 @@
 package com.github.pius.pichats.models;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import javax.validation.Validation;
+import javax.validation.ValidatorFactory;
+
 import com.github.pius.pichats.model.Like;
 import com.github.pius.pichats.model.Post;
 import com.github.pius.pichats.model.User;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LikeTest {
   private final static Like like = new Like();
   private final static Post post = new Post();
   private final static User user1 = new User();
   private final static User user2 = new User();
-  private static Validator validator;
 
   @BeforeAll
   static void initAll() {
     ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-    validator = factory.getValidator();
+    factory.getValidator();
 
     user1.setFirstName("firstname");
     user1.setLastName("lastname");

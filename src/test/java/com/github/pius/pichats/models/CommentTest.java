@@ -1,22 +1,22 @@
 package com.github.pius.pichats.models;
 
-import com.github.pius.pichats.model.Comment;
-import com.github.pius.pichats.model.Like;
-import com.github.pius.pichats.model.Post;
-import com.github.pius.pichats.model.User;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
-import java.util.Set;
+import com.github.pius.pichats.model.Comment;
+import com.github.pius.pichats.model.Post;
+import com.github.pius.pichats.model.User;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
 
 public class CommentTest {
   private final static Comment comment = new Comment();

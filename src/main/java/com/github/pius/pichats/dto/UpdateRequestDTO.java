@@ -1,15 +1,12 @@
 package com.github.pius.pichats.dto;
 
-
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
-import javax.persistence.Column;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
+import lombok.Data;
+
 @Data
-public class UpdateRequestDTO{
+public class UpdateRequestDTO {
   @NotBlank(message = "Please provide first name")
   private String firstName;
 

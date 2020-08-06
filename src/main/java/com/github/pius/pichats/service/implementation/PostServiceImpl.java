@@ -30,16 +30,15 @@ public class PostServiceImpl implements PostService {
   private final PostRepository postRepository;
   private final CloudService cloudService;
   private List<String> listOfPosts = new ArrayList<>();
-  private final AuthServiceImpl authServiceImpl;
   private final UserService userService;
   private final EntityPageIntoDtoPage entityPageIntoDtoPage;
 
   @Autowired
-  public PostServiceImpl(JwtProvider jwtProvider, PostRepository postRepository, CloudService cloudService, AuthServiceImpl authServiceImpl, UserService userService, EntityPageIntoDtoPage entityPageIntoDtoPage) {
+  public PostServiceImpl(JwtProvider jwtProvider, PostRepository postRepository, CloudService cloudService,
+      UserService userService, EntityPageIntoDtoPage entityPageIntoDtoPage) {
     this.jwtProvider = jwtProvider;
     this.postRepository = postRepository;
     this.cloudService = cloudService;
-    this.authServiceImpl = authServiceImpl;
     this.userService = userService;
     this.entityPageIntoDtoPage = entityPageIntoDtoPage;
   }
@@ -47,9 +46,10 @@ public class PostServiceImpl implements PostService {
   // random post to comment on by any user
   @Override
   public Post getPost(String post) {
-    try{
-      return postRepository.findByPost(post).orElseThrow(() -> new CustomException("Post : "+post+ " does not exists", HttpStatus.NOT_FOUND));
-    }catch (Exception ex){
+    try {
+      return postRepository.findByPost(post)
+          .orElseThrow(() -> new CustomException("Post : " + post + " does not exists", HttpStatus.NOT_FOUND));
+    } catch (Exception ex) {
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
   }
@@ -57,8 +57,8 @@ public class PostServiceImpl implements PostService {
   // a logged in user makes a post
   @Override
   public Object post(PostDTO post, MultipartFile file, HttpServletRequest request) {
-    try{
-//      authServiceImpl.isAccountActive(request);
+    try {
+      // authServiceImpl.isAccountActive(request);
       User user = jwtProvider.resolveUser(request);
       Post newPost = new Post();
       newPost.setCaption(post.getCaption());
@@ -69,7 +69,7 @@ public class PostServiceImpl implements PostService {
       newPost.setUrl(uploaded.get("secure_url").toString());
       postRepository.save(newPost);
       return uploaded;
-    }catch (Exception ex){
+    } catch (Exception ex) {
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
   }
@@ -77,15 +77,15 @@ public class PostServiceImpl implements PostService {
   // find a particular post of a logged in user
   @Override
   public Post findPost(String post, HttpServletRequest request) {
-    try{
-//      authServiceImpl.isAccountActive(request);
+    try {
+      // authServiceImpl.isAccountActive(request);
       User user = jwtProvider.resolveUser(request);
       Post postFound = this.getPost(post);
       if (postFound.getUser().equals(user)) {
         return postFound;
       }
       throw new CustomException(user.getUsername() + " does not have post " + post, HttpStatus.NOT_FOUND);
-    }catch (Exception ex){
+    } catch (Exception ex) {
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
   }
@@ -93,17 +93,19 @@ public class PostServiceImpl implements PostService {
   // return all the post of a logged in user
   @Override
   public PageResultConverter findAllPostsByUser(int page, int limit, String username, HttpServletRequest request) {
-    try{
-//      authServiceImpl.isAccountActive(request);
+    try {
+      // authServiceImpl.isAccountActive(request);
       User user = userService.searchByUsername(username, request);
 
-      if(page > 0) page--;
+      if (page > 0)
+        page--;
 
       Pageable pageableReq = PageRequest.of(page, limit);
 
       Page<Post> entities = postRepository.findAllByUserOrderByCreatedAtDesc(pageableReq, user);
 
-      Page<PostResponseDTO> postResponse = entityPageIntoDtoPage.mapEntityPageIntoDtoPage(entities, PostResponseDTO.class);
+      Page<PostResponseDTO> postResponse = entityPageIntoDtoPage.mapEntityPageIntoDtoPage(entities,
+          PostResponseDTO.class);
 
       postResponse.stream().forEach(res -> {
         res.setCaption(res.getCaption());
@@ -113,7 +115,7 @@ public class PostServiceImpl implements PostService {
       });
 
       return new PageResultConverter(postResponse);
-    }catch (Exception ex){
+    } catch (Exception ex) {
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
   }
@@ -121,16 +123,18 @@ public class PostServiceImpl implements PostService {
   // return all the post of a logged in user
   @Override
   public PageResultConverter findAll(int page, int limit, HttpServletRequest request) {
-    try{
+    try {
       jwtProvider.resolveUser(request);
 
-      if(page > 0) page--;
+      if (page > 0)
+        page--;
 
       Pageable pageableReq = PageRequest.of(page, limit);
 
       Page<Post> entities = postRepository.findAllByOrderByCreatedAtDesc(pageableReq);
 
-      Page<PostResponseDTO> postResponse = entityPageIntoDtoPage.mapEntityPageIntoDtoPage(entities, PostResponseDTO.class);
+      Page<PostResponseDTO> postResponse = entityPageIntoDtoPage.mapEntityPageIntoDtoPage(entities,
+          PostResponseDTO.class);
 
       postResponse.stream().forEach(res -> {
         res.setCaption(res.getCaption());
@@ -140,7 +144,7 @@ public class PostServiceImpl implements PostService {
       });
 
       return new PageResultConverter(postResponse);
-    }catch (Exception ex){
+    } catch (Exception ex) {
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
   }
@@ -148,29 +152,29 @@ public class PostServiceImpl implements PostService {
   // find a post of the logged in user and delete
   @Override
   public void delete(String post, HttpServletRequest request) throws Exception {
-//    authServiceImpl.isAccountActive(request);
+    // authServiceImpl.isAccountActive(request);
     cloudService.deleteFile(post);
     postRepository.delete(this.findPost(post, request));
   }
 
   // find a post of the logged in user mark put in a list
   @Override
-  public String selectPostToDelete(String post, HttpServletRequest request){
-//    authServiceImpl.isAccountActive(request);
+  public String selectPostToDelete(String post, HttpServletRequest request) {
+    // authServiceImpl.isAccountActive(request);
     Post postFound = this.findPost(post, request);
-    if (!listOfPosts.contains(postFound.getPost())){
+    if (!listOfPosts.contains(postFound.getPost())) {
       listOfPosts.add(postFound.getPost());
-      return "Post : "+post+" have been marked";
+      return "Post : " + post + " have been marked";
     }
     listOfPosts.remove(postFound.getPost());
-    return "Post : "+post+" have been unmarked";
+    return "Post : " + post + " have been unmarked";
   }
 
   // clear the list of posts if not empty
   @Override
-  public String clearBatchDelete(HttpServletRequest request){
-//    authServiceImpl.isAccountActive(request);
-    if (!listOfPosts.isEmpty()){
+  public String clearBatchDelete(HttpServletRequest request) {
+    // authServiceImpl.isAccountActive(request);
+    if (!listOfPosts.isEmpty()) {
       listOfPosts.clear();
       return "Post(s) marked for delete have been canceled";
     }
@@ -180,9 +184,9 @@ public class PostServiceImpl implements PostService {
   // delete the list posts of a logged in user
   @Override
   public String batchDelete(HttpServletRequest request) throws Exception {
-//    authServiceImpl.isAccountActive(request);
-    if (!listOfPosts.isEmpty()){
-      for (String post : listOfPosts){
+    // authServiceImpl.isAccountActive(request);
+    if (!listOfPosts.isEmpty()) {
+      for (String post : listOfPosts) {
         delete(post, request);
       }
       listOfPosts.clear();
@@ -193,11 +197,11 @@ public class PostServiceImpl implements PostService {
 
   @Override
   public int countPostsOfUser(String username, HttpServletRequest request) {
-    try{
-//      authServiceImpl.isAccountActive(request);
+    try {
+      // authServiceImpl.isAccountActive(request);
       User user = userService.searchByUsername(username, request);
       return postRepository.countPostsByUser(user);
-    }catch (Exception ex){
+    } catch (Exception ex) {
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
   }

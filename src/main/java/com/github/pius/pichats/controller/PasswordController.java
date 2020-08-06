@@ -27,9 +27,10 @@ public class PasswordController {
   }
 
   @PostMapping("/forgot")
-  public ResponseEntity<?> forgotPassword(@Valid @RequestBody ForgotPassDTO forgotPassDTO, BindingResult bindingResult){
+  public ResponseEntity<?> forgotPassword(@Valid @RequestBody ForgotPassDTO forgotPassDTO,
+      BindingResult bindingResult) {
     ResponseEntity<?> errorMap = mapValidationErrorService.MapValidationService(bindingResult);
-    if (errorMap != null){
+    if (errorMap != null) {
       return errorMap;
     }
     String msg = passwordService.forgotPassword(forgotPassDTO);
@@ -39,9 +40,10 @@ public class PasswordController {
   }
 
   @PostMapping("/reset")
-  public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordDTO resetPasswordDTO, BindingResult bindingResult, @RequestParam("token") String token){
+  public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordDTO resetPasswordDTO,
+      BindingResult bindingResult, @RequestParam("token") String token) {
     ResponseEntity<?> errorMap = mapValidationErrorService.MapValidationService(bindingResult);
-    if (errorMap != null){
+    if (errorMap != null) {
       return errorMap;
     }
     String msg = passwordService.resetPassword(resetPasswordDTO, token);
