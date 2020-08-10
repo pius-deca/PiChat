@@ -27,8 +27,17 @@ public class UserController {
     this.mapValidationErrorService = mapValidationErrorService;
   }
 
+  @GetMapping("/is_active")
+  public ResponseEntity<ApiResponse<Boolean>> isActive(HttpServletRequest request) {
+    boolean isActive = userService.isActive(request);
+    ApiResponse<Boolean> response = new ApiResponse<>(HttpStatus.OK);
+    response.setData(isActive);
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
   @GetMapping("/{username}")
-  public ResponseEntity<ApiResponse<User>> search(@PathVariable(name = "username") String username, HttpServletRequest request){
+  public ResponseEntity<ApiResponse<User>> search(@PathVariable(name = "username") String username,
+      HttpServletRequest request) {
     User searchUser = userService.searchByUsername(username, request);
     ApiResponse<User> response = new ApiResponse<>(HttpStatus.OK);
     response.setData(searchUser);
@@ -37,7 +46,8 @@ public class UserController {
   }
 
   @GetMapping("/found")
-  public ResponseEntity<ApiResponse<List<User>>> listOfSearchedUser(@RequestParam String username, HttpServletRequest request){
+  public ResponseEntity<ApiResponse<List<User>>> listOfSearchedUser(@RequestParam String username,
+      HttpServletRequest request) {
     List<User> searchUsers = userService.searchUsernameByString(username, request);
     ApiResponse<List<User>> response = new ApiResponse<>(HttpStatus.OK);
     response.setData(searchUsers);
@@ -46,9 +56,10 @@ public class UserController {
   }
 
   @PostMapping("/changePassword")
-  public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordDTO changePasswordDTO, BindingResult bindingResult, HttpServletRequest request){
+  public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordDTO changePasswordDTO,
+      BindingResult bindingResult, HttpServletRequest request) {
     ResponseEntity<?> errorMap = mapValidationErrorService.MapValidationService(bindingResult);
-    if (errorMap != null){
+    if (errorMap != null) {
       return errorMap;
     }
     String message = userService.changePassword(changePasswordDTO, request);
@@ -58,20 +69,23 @@ public class UserController {
   }
 
   @PatchMapping("/update_account")
-  public ResponseEntity<ApiResponse<UpdateResponseDTO>> updateUser(@Valid @RequestBody UpdateRequestDTO updateRequestDTO, HttpServletRequest request){
+  public ResponseEntity<ApiResponse<UpdateResponseDTO>> updateUser(
+      @Valid @RequestBody UpdateRequestDTO updateRequestDTO, HttpServletRequest request) {
     UpdateResponseDTO updatedUser = userService.updateUser(updateRequestDTO, request);
     ApiResponse<UpdateResponseDTO> response = new ApiResponse<>(HttpStatus.OK);
-    response.setMessage(updatedUser.getUsername()+" updated his/her account successfully.");
+    response.setMessage(updatedUser.getUsername() + " updated his/her account successfully.");
     response.setData(updatedUser);
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
-//  @PatchMapping("/update_bio")
-//  public ResponseEntity<ApiResponse<Bio>> updateUserBio(@Valid @RequestBody BioDTO bioDTO, HttpServletRequest request){
-//    Bio updatedUserBio = userService.updateUserBio(bioDTO, request);
-//    ApiResponse<Bio> response = new ApiResponse<>(HttpStatus.OK);
-//    response.setMessage(updatedUserBio.getUser().getUsername()+" updated his/her bio successfully.");
-//    response.setData(updatedUserBio);
-//    return new ResponseEntity<>(response, HttpStatus.OK);
-//  }
+  // @PatchMapping("/update_bio")
+  // public ResponseEntity<ApiResponse<Bio>> updateUserBio(@Valid @RequestBody
+  // BioDTO bioDTO, HttpServletRequest request){
+  // Bio updatedUserBio = userService.updateUserBio(bioDTO, request);
+  // ApiResponse<Bio> response = new ApiResponse<>(HttpStatus.OK);
+  // response.setMessage(updatedUserBio.getUser().getUsername()+" updated his/her
+  // bio successfully.");
+  // response.setData(updatedUserBio);
+  // return new ResponseEntity<>(response, HttpStatus.OK);
+  // }
 }

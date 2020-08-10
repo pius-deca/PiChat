@@ -4,6 +4,7 @@ import com.github.pius.pichats.exceptions.CustomException;
 import com.github.pius.pichats.model.ProfilePic;
 import com.github.pius.pichats.model.User;
 import com.github.pius.pichats.repository.ProfileRepository;
+import com.github.pius.pichats.repository.UserRepository;
 import com.github.pius.pichats.security.JwtProvider;
 import com.github.pius.pichats.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +22,15 @@ public class ProfileServiceImpl implements ProfileService {
 
   private final JwtProvider jwtProvider;
   private final ProfileRepository profileRepository;
+  private final UserRepository userRepository;
   private final CloudService cloudService;
 
   @Autowired
-  public ProfileServiceImpl(JwtProvider jwtProvider, ProfileRepository profileRepository, CloudService cloudService) {
+  public ProfileServiceImpl(JwtProvider jwtProvider, ProfileRepository profileRepository, UserRepository userRepository,
+      CloudService cloudService) {
     this.jwtProvider = jwtProvider;
     this.profileRepository = profileRepository;
+    this.userRepository = userRepository;
     this.cloudService = cloudService;
   }
 
@@ -46,7 +50,6 @@ public class ProfileServiceImpl implements ProfileService {
   public Object uploadProfile(MultipartFile pic, HttpServletRequest request) {
     try {
       User user = jwtProvider.resolveUser(request);
-      ProfilePic profile = new ProfilePic();
       Optional<ProfilePic> profilePic = profileRepository.findByUser(user);
       // upload post if username exists
       Map uploaded = cloudService.upload(pictureFormat(pic));
@@ -55,13 +58,18 @@ public class ProfileServiceImpl implements ProfileService {
         cloudService.deleteFile(profilePic.get().getProfilePic());
         profilePic.get().setProfilePic(cloudService.getFileName());
         profilePic.get().setUrl(uploaded.get("secure_url").toString());
-        profileRepository.save(profilePic.get());
+        ProfilePic changedProfile = profileRepository.save(profilePic.get());
+        user.setProfilePic(changedProfile);
+        userRepository.save(user);
         return uploaded;
       }
+      ProfilePic profile = new ProfilePic();
       profile.setProfilePic(cloudService.getFileName());
       profile.setUser(user);
       profile.setUrl(uploaded.get("secure_url").toString());
-      profileRepository.save(profile);
+      ProfilePic savedProfile = profileRepository.save(profile);
+      user.setProfilePic(savedProfile);
+      userRepository.save(user);
       return uploaded;
     } catch (Exception ex) {
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
@@ -76,7 +84,7 @@ public class ProfileServiceImpl implements ProfileService {
       if (profile.isPresent()) {
         return profile.get();
       }
-      throw new CustomException("Post : " + pic + " does not exists", HttpStatus.NOT_FOUND);
+      throw new CustomException("Profile : " + pic + " does not exists", HttpStatus.NOT_FOUND);
     } catch (Exception ex) {
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }

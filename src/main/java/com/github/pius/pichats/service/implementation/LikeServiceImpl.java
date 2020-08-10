@@ -32,7 +32,6 @@ public class LikeServiceImpl implements LikeService {
   @Override
   public Like likeOrUnlike(String post, HttpServletRequest request) {
     try {
-      // authServiceImpl.isAccountActive(request);
       User user = jwtProvider.resolveUser(request);
       if (user.isActive()) {
         // find any post to like
@@ -50,29 +49,22 @@ public class LikeServiceImpl implements LikeService {
   // this method likes or unlikes
   private Like saveLike(User user, Post postFound, Like newLike, Optional<Like> foundLike) {
     if (foundLike.isPresent()) {
-      if (foundLike.get().isLikes()) {
-        foundLike.get().setLikes(false);
-        return likeRepository.save(foundLike.get());
-      }
-      foundLike.get().setLikes(true);
-      return likeRepository.save(foundLike.get());
+      likeRepository.delete(foundLike.get());
+      return foundLike.get();
     }
     newLike.setUser(user);
     newLike.setPost(postFound);
-    newLike.setLikes(true);
     return likeRepository.save(newLike);
+
   }
 
   @Override
   public int countPostLikes(String post, HttpServletRequest request) {
-    // authServiceImpl.isAccountActive(request);
     Post postFound = postService.findPost(post, request);
     Optional<Like> like = likeRepository.findByPost(postFound);
     int numOfLikes = 0;
     if (like.isPresent()) {
-      if (like.get().isLikes()) {
-        numOfLikes = likeRepository.countLikesByPost(postFound);
-      }
+      numOfLikes = likeRepository.countLikesByPost(postFound);
     }
     return numOfLikes;
   }

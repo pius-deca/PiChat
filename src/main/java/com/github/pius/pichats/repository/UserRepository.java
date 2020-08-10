@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import com.github.pius.pichats.model.User;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -13,9 +12,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   Optional<User> findByUsername(String username);
 
-  String search = "from users u WHERE LOWER(u.username) LIKE lower(concat(:username,'%'))";
-
-  @Query(search)
+  @Query("from users u WHERE LOWER(u.username) LIKE lower(concat(:username,'%'))")
   List<User> searchByUsername(String username);
 
   boolean existsByEmail(String email);

@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "posts")
-public class Post extends GeneralBaseEntity{
+public class Post extends GeneralBaseEntity {
 
   private String caption;
 

@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
@@ -59,25 +61,25 @@ public class FollowController {
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
-  // @GetMapping("/followers")
-  // public ResponseEntity<ApiResponse<Integer>> followers(HttpServletRequest
-  // request){
-  // int numOfFollowers = followService.countFollowers(request);
-  // ApiResponse<Integer> response = new ApiResponse<>(HttpStatus.OK);
-  // response.setData(numOfFollowers);
-  // return new ResponseEntity<>(response, HttpStatus.OK);
-  // }
-  //
-  // @GetMapping("/following")
-  // public ResponseEntity<ApiResponse<Integer>> following(HttpServletRequest
-  // request){
-  // int numOfFollowing = followService.countFollowing(request);
-  // ApiResponse<Integer> response = new ApiResponse<>(HttpStatus.OK);
-  // response.setData(numOfFollowing);
-  // return new ResponseEntity<>(response, HttpStatus.OK);
-  // }
-
   @GetMapping("/{username}/followers")
+  public ResponseEntity<ApiResponse<List<Follow>>> listOfFollowers(@PathVariable(name = "username") String username,
+      HttpServletRequest request) {
+    List<Follow> followers = followService.listOfFollowers(username, request);
+    ApiResponse<List<Follow>> response = new ApiResponse<>(HttpStatus.OK);
+    response.setData(followers);
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  @GetMapping("/{username}/following")
+  public ResponseEntity<ApiResponse<List<Follow>>> listOfFollowing(@PathVariable(name = "username") String username,
+      HttpServletRequest request) {
+    List<Follow> followings = followService.listOfFollowing(username, request);
+    ApiResponse<List<Follow>> response = new ApiResponse<>(HttpStatus.OK);
+    response.setData(followings);
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  @GetMapping("/{username}/followers/count")
   public ResponseEntity<ApiResponse<Integer>> followers(@PathVariable(name = "username") String username,
       HttpServletRequest request) {
     int numOfFollowers = followService.countFollowersOfSearchedUser(username, request);
@@ -86,7 +88,7 @@ public class FollowController {
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
-  @GetMapping("/{username}/following")
+  @GetMapping("/{username}/following/count")
   public ResponseEntity<ApiResponse<Integer>> following(@PathVariable(name = "username") String username,
       HttpServletRequest request) {
     int numOfFollowing = followService.countFollowingSearchedUser(username, request);

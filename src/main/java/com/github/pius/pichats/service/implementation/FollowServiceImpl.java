@@ -1,5 +1,6 @@
 package com.github.pius.pichats.service.implementation;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -8,6 +9,7 @@ import com.github.pius.pichats.exceptions.CustomException;
 import com.github.pius.pichats.model.Follow;
 import com.github.pius.pichats.model.User;
 import com.github.pius.pichats.repository.FollowRepository;
+import com.github.pius.pichats.repository.UserRepository;
 import com.github.pius.pichats.security.JwtProvider;
 import com.github.pius.pichats.service.FollowService;
 import com.github.pius.pichats.service.UserService;
@@ -19,20 +21,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class FollowServiceImpl implements FollowService {
   private final FollowRepository followRepository;
+  private final UserRepository userRepository;
   private final UserService userService;
   private final JwtProvider jwtProvider;
 
   @Autowired
-  public FollowServiceImpl(FollowRepository followRepository, UserService userService, JwtProvider jwtProvider) {
+  public FollowServiceImpl(FollowRepository followRepository, UserRepository userRepository, UserService userService,
+      JwtProvider jwtProvider) {
     this.followRepository = followRepository;
     this.userService = userService;
     this.jwtProvider = jwtProvider;
+    this.userRepository = userRepository;
   }
 
   @Override
   public Follow follow(String username, HttpServletRequest request) {
     try {
-      // authServiceImpl.isAccountActive(request);
       User user = jwtProvider.resolveUser(request);
       User foundUserToFollow = userService.searchByUsername(username, request);
       Optional<Follow> following = followRepository.findByFollowing(username);
@@ -56,7 +60,6 @@ public class FollowServiceImpl implements FollowService {
   @Override
   public Follow acceptRequest(String username, HttpServletRequest request) {
     try {
-      // authServiceImpl.isAccountActive(request);
       User foundRequester = userService.searchByUsername(username, request);
       Optional<Follow> following = followRepository.findByUser(foundRequester);
       if (following.isPresent()) {
@@ -72,7 +75,6 @@ public class FollowServiceImpl implements FollowService {
   @Override
   public String declineRequest(String username, HttpServletRequest request) {
     try {
-      // authServiceImpl.isAccountActive(request);
       User user = jwtProvider.resolveUser(request);
       User foundRequester = userService.searchByUsername(username, request);
       Optional<Follow> following = followRepository.findByUser(foundRequester);
@@ -89,7 +91,6 @@ public class FollowServiceImpl implements FollowService {
   @Override
   public String unFollow(String username, HttpServletRequest request) {
     try {
-      // authServiceImpl.isAccountActive(request);
       User user = jwtProvider.resolveUser(request);
       userService.searchByUsername(username, request);
       Optional<Follow> following = followRepository.findByFollowing(username);
@@ -104,34 +105,9 @@ public class FollowServiceImpl implements FollowService {
     }
   }
 
-  // @Override
-  // public int countFollowers(HttpServletRequest request){
-  // try{
-  //// authServiceImpl.isAccountActive(request);
-  // User user = jwtProvider.resolveUser(request);
-  // return
-  // followRepository.countFollowersByFollowingAndAccepted(user.getUsername(),
-  // true);
-  // }catch (Exception ex){
-  // throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
-  // }
-  // }
-  //
-  // @Override
-  // public int countFollowing(HttpServletRequest request){
-  // try{
-  //// authServiceImpl.isAccountActive(request);
-  // User user = jwtProvider.resolveUser(request);
-  // return followRepository.countFollowingByUserAndAccepted(user, true);
-  // }catch (Exception ex){
-  // throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
-  // }
-  // }
-
   @Override
   public int countFollowersOfSearchedUser(String username, HttpServletRequest request) {
     try {
-      // authServiceImpl.isAccountActive(request);
       User searchedUser = userService.searchByUsername(username, request);
       return followRepository.countFollowersByFollowingAndAccepted(searchedUser.getUsername(), true);
     } catch (Exception ex) {
@@ -142,11 +118,34 @@ public class FollowServiceImpl implements FollowService {
   @Override
   public int countFollowingSearchedUser(String username, HttpServletRequest request) {
     try {
-      // authServiceImpl.isAccountActive(request);
       User searchedUser = userService.searchByUsername(username, request);
       return followRepository.countFollowingByUserAndAccepted(searchedUser, true);
     } catch (Exception ex) {
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+  }
+
+  @Override
+  public List<Follow> listOfFollowers(String username, HttpServletRequest request) {
+    try {
+      jwtProvider.resolveUser(request);
+      return followRepository.findAllByFollowingAndAccepted(username, true);
+    } catch (Exception e) {
+      throw new CustomException(e.getMessage(), HttpStatus.NOT_FOUND);
+    }
+  }
+
+  @Override
+  public List<Follow> listOfFollowing(String username, HttpServletRequest request) {
+    try {
+      jwtProvider.resolveUser(request);
+      Optional<User> user = userRepository.findByUsername(username);
+      if (user.isPresent()) {
+        return followRepository.findAllByUserAndAccepted(user.get(), true);
+      }
+      throw new CustomException("User : " + username + " does not exists", HttpStatus.NOT_FOUND);
+    } catch (Exception e) {
+      throw new CustomException(e.getMessage(), HttpStatus.NOT_FOUND);
     }
   }
 }

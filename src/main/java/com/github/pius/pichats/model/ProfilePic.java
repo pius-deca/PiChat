@@ -8,12 +8,14 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "profiles")
-public class ProfilePic extends GeneralBaseEntity{
+public class ProfilePic extends GeneralBaseEntity {
 
   @NotBlank(message = "Please provide a picture")
   @Column(name = "profile_pic")
@@ -23,5 +25,6 @@ public class ProfilePic extends GeneralBaseEntity{
 
   @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")
+  @JsonIgnore
   private User user;
 }

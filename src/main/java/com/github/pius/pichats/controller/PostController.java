@@ -1,7 +1,6 @@
 package com.github.pius.pichats.controller;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 import com.github.pius.pichats.apiresponse.ApiResponse;
 import com.github.pius.pichats.dto.PostDTO;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,9 +31,9 @@ public class PostController {
   }
 
   @PostMapping(value = "/post")
-  public ResponseEntity<ApiResponse<Object>> post(@Valid @RequestBody PostDTO post,
+  public ResponseEntity<ApiResponse<Object>> post(@RequestParam("caption") PostDTO caption,
       @RequestParam("file") MultipartFile file, HttpServletRequest request) {
-    Object newPost = postService.post(post, file, request);
+    Object newPost = postService.post(caption, file, request);
     ApiResponse<Object> response = new ApiResponse<>(HttpStatus.CREATED);
     response.setData(newPost);
     response.setMessage("Post has been made successfully by a user");

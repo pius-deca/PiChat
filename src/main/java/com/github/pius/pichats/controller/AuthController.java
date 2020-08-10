@@ -4,7 +4,6 @@ import com.github.pius.pichats.apiresponse.ApiResponse;
 import com.github.pius.pichats.dto.LoginRequestDTO;
 import com.github.pius.pichats.dto.AuthResponseDTO;
 import com.github.pius.pichats.dto.SignupRequestDTO;
-import com.github.pius.pichats.model.User;
 import com.github.pius.pichats.service.AuthService;
 import com.github.pius.pichats.service.MapValidationErrorService;
 import org.modelmapper.ModelMapper;
@@ -46,9 +45,9 @@ public class AuthController {
   }
 
   @GetMapping("/user/activate")
-  public ResponseEntity<?> activate(@RequestParam("code") String code, HttpServletRequest request) {
+  public ResponseEntity<ApiResponse<String>> activate(@RequestParam("code") String code, HttpServletRequest request) {
     String activated = authService.activate(code, request);
-    ApiResponse<User> response = new ApiResponse<>(HttpStatus.OK);
+    ApiResponse<String> response = new ApiResponse<>(HttpStatus.OK);
     response.setMessage(activated);
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
