@@ -7,6 +7,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 public interface FollowService {
+  String isFollowing(String username, HttpServletRequest request);
+
   Follow follow(String username, HttpServletRequest request);
 
   Follow acceptRequest(String username, HttpServletRequest request);

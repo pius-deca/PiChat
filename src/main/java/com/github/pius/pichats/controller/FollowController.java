@@ -61,6 +61,15 @@ public class FollowController {
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
+  @GetMapping("/{username}/follow/check")
+  public ResponseEntity<ApiResponse<String>> isFollowing(@PathVariable(name = "username") String username,
+      HttpServletRequest request) {
+    String check = followService.isFollowing(username, request);
+    ApiResponse<String> response = new ApiResponse<>(HttpStatus.OK);
+    response.setData(check);
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
   @GetMapping("/{username}/followers")
   public ResponseEntity<ApiResponse<List<Follow>>> listOfFollowers(@PathVariable(name = "username") String username,
       HttpServletRequest request) {

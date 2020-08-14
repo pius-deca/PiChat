@@ -74,7 +74,7 @@ public class UserServiceImpl implements UserService {
       User user = jwtProvider.resolveUser(request);
       if (!username.isEmpty()) {
         List<User> users = userRepository.searchByUsername(username);
-        return users.stream().filter(u -> u != user).collect(Collectors.toList());
+        return users.stream().filter(u -> u != user && u.isActive()).collect(Collectors.toList());
       }
       return new ArrayList<>();
     } catch (Exception ex) {

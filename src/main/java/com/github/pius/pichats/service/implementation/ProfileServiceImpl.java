@@ -1,8 +1,10 @@
 package com.github.pius.pichats.service.implementation;
 
 import com.github.pius.pichats.exceptions.CustomException;
+import com.github.pius.pichats.model.Notification;
 import com.github.pius.pichats.model.ProfilePic;
 import com.github.pius.pichats.model.User;
+import com.github.pius.pichats.repository.NotificationRepository;
 import com.github.pius.pichats.repository.ProfileRepository;
 import com.github.pius.pichats.repository.UserRepository;
 import com.github.pius.pichats.security.JwtProvider;
@@ -22,14 +24,16 @@ public class ProfileServiceImpl implements ProfileService {
 
   private final JwtProvider jwtProvider;
   private final ProfileRepository profileRepository;
+  private final NotificationRepository notificationRepository;
   private final UserRepository userRepository;
   private final CloudService cloudService;
 
   @Autowired
-  public ProfileServiceImpl(JwtProvider jwtProvider, ProfileRepository profileRepository, UserRepository userRepository,
-      CloudService cloudService) {
+  public ProfileServiceImpl(JwtProvider jwtProvider, ProfileRepository profileRepository,
+      NotificationRepository notificationRepository, UserRepository userRepository, CloudService cloudService) {
     this.jwtProvider = jwtProvider;
     this.profileRepository = profileRepository;
+    this.notificationRepository = notificationRepository;
     this.userRepository = userRepository;
     this.cloudService = cloudService;
   }
@@ -52,6 +56,7 @@ public class ProfileServiceImpl implements ProfileService {
       User user = jwtProvider.resolveUser(request);
       Optional<ProfilePic> profilePic = profileRepository.findByUser(user);
       // upload post if username exists
+      Notification notify = new Notification();
       Map uploaded = cloudService.upload(pictureFormat(pic));
       if (profilePic.isPresent()) {
         // delete the previous profile before uploading a new one
@@ -60,6 +65,11 @@ public class ProfileServiceImpl implements ProfileService {
         profilePic.get().setUrl(uploaded.get("secure_url").toString());
         ProfilePic changedProfile = profileRepository.save(profilePic.get());
         user.setProfilePic(changedProfile);
+
+        // notify user that his/her profile pic was changed
+        notify.setActor(user.getUsername());
+        notify.setMessage("Profile picture was changed");
+        notificationRepository.save(notify);
         userRepository.save(user);
         return uploaded;
       }
@@ -69,6 +79,11 @@ public class ProfileServiceImpl implements ProfileService {
       profile.setUrl(uploaded.get("secure_url").toString());
       ProfilePic savedProfile = profileRepository.save(profile);
       user.setProfilePic(savedProfile);
+
+      // notify user that his/her profile pic was changed
+      notify.setActor(user.getUsername());
+      notify.setMessage("Profile picture was created");
+      notificationRepository.save(notify);
       userRepository.save(user);
       return uploaded;
     } catch (Exception ex) {
@@ -108,7 +123,14 @@ public class ProfileServiceImpl implements ProfileService {
   // this method deletes the profile that belongs to a user
   @Override
   public void delete(String profile, HttpServletRequest request) throws Exception {
+    User user = jwtProvider.resolveUser(request);
+    Notification notify = new Notification();
     cloudService.deleteFile(profile);
+
+    // notify user that profile pic was deleted
+    notify.setActor(user.getUsername());
+    notify.setMessage("Profile picture was deleted");
+    notificationRepository.save(notify);
     profileRepository.delete(this.getProfile(profile, request));
   }
 }

@@ -2,9 +2,11 @@ package com.github.pius.pichats.service.implementation;
 
 import com.github.pius.pichats.exceptions.CustomException;
 import com.github.pius.pichats.model.Like;
+import com.github.pius.pichats.model.Notification;
 import com.github.pius.pichats.model.Post;
 import com.github.pius.pichats.model.User;
 import com.github.pius.pichats.repository.LikeRepository;
+import com.github.pius.pichats.repository.NotificationRepository;
 import com.github.pius.pichats.security.JwtProvider;
 import com.github.pius.pichats.service.LikeService;
 import com.github.pius.pichats.service.PostService;
@@ -18,12 +20,15 @@ import java.util.Optional;
 @Service
 public class LikeServiceImpl implements LikeService {
   private final LikeRepository likeRepository;
+  private final NotificationRepository notificationRepository;
   private final JwtProvider jwtProvider;
   private final PostService postService;
 
   @Autowired
-  public LikeServiceImpl(LikeRepository likeRepository, JwtProvider jwtProvider, PostService postService) {
+  public LikeServiceImpl(LikeRepository likeRepository, NotificationRepository notificationRepository,
+      JwtProvider jwtProvider, PostService postService) {
     this.likeRepository = likeRepository;
+    this.notificationRepository = notificationRepository;
     this.jwtProvider = jwtProvider;
     this.postService = postService;
   }
@@ -52,8 +57,15 @@ public class LikeServiceImpl implements LikeService {
       likeRepository.delete(foundLike.get());
       return foundLike.get();
     }
+    Notification notify = new Notification();
     newLike.setUser(user);
     newLike.setPost(postFound);
+
+    // notify user that his/her post was liked
+    notify.setActor(user.getUsername());
+    notify.setMessage(user.getUsername() + " liked your post");
+    notify.setSubject(postFound.getUser());
+    notificationRepository.save(notify);
     return likeRepository.save(newLike);
 
   }
