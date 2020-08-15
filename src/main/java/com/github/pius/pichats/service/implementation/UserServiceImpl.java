@@ -6,9 +6,11 @@ import com.github.pius.pichats.dto.UpdateResponseDTO;
 import com.github.pius.pichats.exceptions.CustomException;
 import com.github.pius.pichats.model.EmailVerification;
 import com.github.pius.pichats.model.Follow;
+import com.github.pius.pichats.model.Notification;
 import com.github.pius.pichats.model.User;
 import com.github.pius.pichats.repository.EmailVerificationRepository;
 import com.github.pius.pichats.repository.FollowRepository;
+import com.github.pius.pichats.repository.NotificationRepository;
 import com.github.pius.pichats.repository.UserRepository;
 import com.github.pius.pichats.security.JwtProvider;
 import com.github.pius.pichats.service.UserService;
@@ -33,17 +35,19 @@ public class UserServiceImpl implements UserService {
   private final FollowRepository followRepository;
   private final CodeGenerator codeGenerator;
   private final EmailVerificationRepository emailVerificationRepository;
+  private final NotificationRepository notificationRepository;
 
   @Autowired
   public UserServiceImpl(UserRepository userRepository, JwtProvider jwtProvider, PasswordEncoder passwordEncoder,
       FollowRepository followRepository, CodeGenerator codeGenerator,
-      EmailVerificationRepository emailVerificationRepository) {
+      EmailVerificationRepository emailVerificationRepository, NotificationRepository notificationRepository) {
     this.userRepository = userRepository;
     this.jwtProvider = jwtProvider;
     this.passwordEncoder = passwordEncoder;
     this.followRepository = followRepository;
     this.codeGenerator = codeGenerator;
     this.emailVerificationRepository = emailVerificationRepository;
+    this.notificationRepository = notificationRepository;
   }
 
   // check if user is active
@@ -93,10 +97,16 @@ public class UserServiceImpl implements UserService {
   }
 
   private String newPassword(ChangePasswordDTO passwordDTO, User user) {
+    Notification notify = new Notification();
     if (passwordEncoder.matches(passwordDTO.getCurrentPassword(), user.getPassword())) {
       if (passwordDTO.getNewPassword().equals(passwordDTO.getConfirmPassword())) {
         user.setPassword(passwordEncoder.encode(passwordDTO.getNewPassword()));
         userRepository.save(user);
+
+        // notify user once password is changed
+        notify.setActor(user.getUsername());
+        notify.setMessage("Password was changed");
+        notificationRepository.save(notify);
         return user.getUsername() + " has changed password";
       }
       throw new CustomException("New Password not yet confirmed, passwords must match", HttpStatus.BAD_REQUEST);
@@ -150,6 +160,11 @@ public class UserServiceImpl implements UserService {
       }
       // save the follows table
       followRepository.saveAll(followList);
+      // notify user once account info has been changed
+      Notification notify = new Notification();
+      notify.setActor(user.getUsername());
+      notify.setMessage("Account details was changed");
+      notificationRepository.save(notify);
       return new UpdateResponseDTO(updatedUser.getId(), updatedUser.getFirstName(), updatedUser.getLastName(),
           updatedUser.getEmail(), updatedUser.getUsername(), updatedUser.isActive(), updatedUser.getCreatedAt(),
           updatedUser.getUpdatedAt(), updateRequestDTO.getToken());

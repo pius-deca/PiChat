@@ -5,8 +5,10 @@ import com.github.pius.pichats.dto.AuthResponseDTO;
 import com.github.pius.pichats.dto.SignupRequestDTO;
 import com.github.pius.pichats.exceptions.CustomException;
 import com.github.pius.pichats.model.EmailVerification;
+import com.github.pius.pichats.model.Notification;
 import com.github.pius.pichats.model.User;
 import com.github.pius.pichats.repository.EmailVerificationRepository;
+import com.github.pius.pichats.repository.NotificationRepository;
 import com.github.pius.pichats.repository.UserRepository;
 import com.github.pius.pichats.security.JwtProvider;
 import com.github.pius.pichats.service.AuthService;
@@ -31,18 +33,20 @@ public class AuthServiceImpl implements AuthService {
   private final PasswordEncoder passwordEncoder;
   private final AuthenticationManager authenticationManager;
   private final EmailVerificationRepository emailVerificationRepository;
+  private final NotificationRepository notificationRepository;
   private final EmailSenderService emailSenderService;
   private final TokenService tokenService;
 
   @Autowired
   public AuthServiceImpl(JwtProvider jwtProvider, UserRepository userRepository, PasswordEncoder passwordEncoder,
       AuthenticationManager authenticationManager, EmailVerificationRepository emailVerificationRepository,
-      EmailSenderService emailSenderService, TokenService tokenService) {
+      NotificationRepository notificationRepository, EmailSenderService emailSenderService, TokenService tokenService) {
     this.jwtProvider = jwtProvider;
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.authenticationManager = authenticationManager;
     this.emailVerificationRepository = emailVerificationRepository;
+    this.notificationRepository = notificationRepository;
     this.emailSenderService = emailSenderService;
     this.tokenService = tokenService;
   }
@@ -75,6 +79,13 @@ public class AuthServiceImpl implements AuthService {
           "Use the code below to activate your pichat account" + "\n code - " + code);
       newUser = userRepository.save(newUser);
       String token = jwtProvider.createToken(newUser.getUsername());
+
+      // notify user that he/she has created an account
+      Notification notify = new Notification();
+      notify.setActor(newUser.getUsername());
+      notify.setMessage(
+          "Welcome!!!, and thank you for creating an account on this platform, don't worry you will have a blast once you activate your account");
+      notificationRepository.save(notify);
       return new AuthResponseDTO(newUser.getId(), newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(),
           newUser.getUsername(), false, newUser.getCreatedAt(), newUser.getUpdatedAt(), token);
     } catch (MailSendException ex) {
@@ -95,6 +106,12 @@ public class AuthServiceImpl implements AuthService {
     }
     user.setActive(true);
     userRepository.save(user);
+
+    // notify user that he/she has activated their account
+    Notification notify = new Notification();
+    notify.setActor(user.getUsername());
+    notify.setMessage("Thank you for activating your account, please feel free an enjoy this platform");
+    notificationRepository.save(notify);
     return "Account has been activated";
   }
 
