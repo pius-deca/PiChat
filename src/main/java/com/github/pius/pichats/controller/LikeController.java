@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping
+@RequestMapping("/post")
 @CrossOrigin
 public class LikeController {
   private final LikeService likeService;
@@ -19,8 +19,8 @@ public class LikeController {
     this.likeService = likeService;
   }
 
-  @PostMapping("/post/{postId}/like")
-  public ResponseEntity<ApiResponse<Like>> comment(@PathVariable(name = "postId") String post,
+  @PostMapping("/{postId}/like")
+  public ResponseEntity<ApiResponse<Like>> likePost(@PathVariable(name = "postId") String post,
       HttpServletRequest request) {
     Like newLike = likeService.likeOrUnlike(post, request);
     ApiResponse<Like> response = new ApiResponse<>(HttpStatus.CREATED);
@@ -29,7 +29,7 @@ public class LikeController {
     return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
 
-  @GetMapping("/post/{postId}/likes/count")
+  @GetMapping("/{postId}/likes/count")
   public ResponseEntity<ApiResponse<Integer>> countLikes(@PathVariable(name = "postId") String post,
       HttpServletRequest request) {
     int numOfLikes = likeService.countPostLikes(post, request);

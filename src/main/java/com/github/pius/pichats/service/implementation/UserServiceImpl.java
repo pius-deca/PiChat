@@ -6,9 +6,11 @@ import com.github.pius.pichats.dto.UpdateResponseDTO;
 import com.github.pius.pichats.exceptions.CustomException;
 import com.github.pius.pichats.model.EmailVerification;
 import com.github.pius.pichats.model.Follow;
+import com.github.pius.pichats.model.Notification;
 import com.github.pius.pichats.model.User;
 import com.github.pius.pichats.repository.EmailVerificationRepository;
 import com.github.pius.pichats.repository.FollowRepository;
+import com.github.pius.pichats.repository.NotificationRepository;
 import com.github.pius.pichats.repository.UserRepository;
 import com.github.pius.pichats.security.JwtProvider;
 import com.github.pius.pichats.service.UserService;
@@ -23,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -32,17 +35,26 @@ public class UserServiceImpl implements UserService {
   private final FollowRepository followRepository;
   private final CodeGenerator codeGenerator;
   private final EmailVerificationRepository emailVerificationRepository;
+  private final NotificationRepository notificationRepository;
 
   @Autowired
   public UserServiceImpl(UserRepository userRepository, JwtProvider jwtProvider, PasswordEncoder passwordEncoder,
       FollowRepository followRepository, CodeGenerator codeGenerator,
-      EmailVerificationRepository emailVerificationRepository) {
+      EmailVerificationRepository emailVerificationRepository, NotificationRepository notificationRepository) {
     this.userRepository = userRepository;
     this.jwtProvider = jwtProvider;
     this.passwordEncoder = passwordEncoder;
     this.followRepository = followRepository;
     this.codeGenerator = codeGenerator;
     this.emailVerificationRepository = emailVerificationRepository;
+    this.notificationRepository = notificationRepository;
+  }
+
+  // check if user is active
+  @Override
+  public boolean isActive(HttpServletRequest request) {
+    User user = jwtProvider.resolveUser(request);
+    return user.isActive();
   }
 
   @Override
@@ -63,9 +75,10 @@ public class UserServiceImpl implements UserService {
   @Override
   public List<User> searchUsernameByString(String username, HttpServletRequest request) {
     try {
-      jwtProvider.resolveUser(request);
+      User user = jwtProvider.resolveUser(request);
       if (!username.isEmpty()) {
-        return userRepository.searchByUsername(username);
+        List<User> users = userRepository.searchByUsername(username);
+        return users.stream().filter(u -> u != user && u.isActive()).collect(Collectors.toList());
       }
       return new ArrayList<>();
     } catch (Exception ex) {
@@ -84,10 +97,16 @@ public class UserServiceImpl implements UserService {
   }
 
   private String newPassword(ChangePasswordDTO passwordDTO, User user) {
+    Notification notify = new Notification();
     if (passwordEncoder.matches(passwordDTO.getCurrentPassword(), user.getPassword())) {
       if (passwordDTO.getNewPassword().equals(passwordDTO.getConfirmPassword())) {
         user.setPassword(passwordEncoder.encode(passwordDTO.getNewPassword()));
         userRepository.save(user);
+
+        // notify user once password is changed
+        notify.setActor(user.getUsername());
+        notify.setMessage("Password was changed");
+        notificationRepository.save(notify);
         return user.getUsername() + " has changed password";
       }
       throw new CustomException("New Password not yet confirmed, passwords must match", HttpStatus.BAD_REQUEST);
@@ -100,7 +119,7 @@ public class UserServiceImpl implements UserService {
   public UpdateResponseDTO updateUser(UpdateRequestDTO updateRequestDTO, HttpServletRequest request) {
     User user = jwtProvider.resolveUser(request);
     try {
-      if (!(user.getEmail().equals(updateRequestDTO.getEmail().toLowerCase()))) {
+      if (!(user.getEmail().equalsIgnoreCase(updateRequestDTO.getEmail()))) {
         if (userRepository.existsByEmail(updateRequestDTO.getEmail().toLowerCase())) {
           throw new CustomException(updateRequestDTO.getEmail() + " already exists", HttpStatus.BAD_REQUEST);
         }
@@ -118,7 +137,7 @@ public class UserServiceImpl implements UserService {
           emailVerificationRepository.save(em.get());
         }
         throw new CustomException("Email is not verified", HttpStatus.BAD_REQUEST);
-      } else if (!(user.getUsername().toLowerCase().equals(updateRequestDTO.getUsername().toLowerCase()))) {
+      } else if (!(user.getUsername().equalsIgnoreCase(updateRequestDTO.getUsername()))) {
         if (userRepository.existsByUsername(updateRequestDTO.getUsername().toLowerCase())) {
           throw new CustomException(updateRequestDTO.getUsername() + " already exists", HttpStatus.BAD_REQUEST);
         }
@@ -141,41 +160,17 @@ public class UserServiceImpl implements UserService {
       }
       // save the follows table
       followRepository.saveAll(followList);
-      return new UpdateResponseDTO(updatedUser.getFirstName(), updatedUser.getLastName(), updatedUser.getEmail(),
-          updatedUser.getUsername(), null, updatedUser.isActive(), updateRequestDTO.getToken(), updatedUser.getId(),
-          updatedUser.getCreatedAt(), updatedUser.getUpdatedAt());
+      // notify user once account info has been changed
+      Notification notify = new Notification();
+      notify.setActor(user.getUsername());
+      notify.setMessage("Account details was changed");
+      notificationRepository.save(notify);
+      return new UpdateResponseDTO(updatedUser.getId(), updatedUser.getFirstName(), updatedUser.getLastName(),
+          updatedUser.getEmail(), updatedUser.getUsername(), updatedUser.isActive(), updatedUser.getCreatedAt(),
+          updatedUser.getUpdatedAt(), updateRequestDTO.getToken());
     } catch (Exception e) {
       throw new CustomException("Error trying to update '" + user.getUsername() + "'", HttpStatus.BAD_REQUEST);
     }
   }
-  //
-  // @Override
-  // public Bio updateUserBio(BioDTO bioDTO, HttpServletRequest request) {
-  // User user = jwtProvider.resolveUser(request);
-  // try{
-  // Optional<Bio> userBio = bioRepository.findByUser(user);
-  // if (userBio.isPresent()){
-  // userBio.get().setPhone(bioDTO.getPhone());
-  // userBio.get().setGender(bioDTO.getGender());
-  // userBio.get().setDob(bioDTO.getDob());
-  // userBio.get().setCountry(bioDTO.getCountry());
-  // userBio.get().setAddress(bioDTO.getAddress());
-  // userBio.get().setDescription(bioDTO.getDescription());
-  // return bioRepository.save(userBio.get());
-  // }
-  // Bio newUserBio = new Bio();
-  // newUserBio.setPhone(bioDTO.getPhone());
-  // newUserBio.setGender(bioDTO.getGender());
-  // newUserBio.setDob(bioDTO.getDob());
-  // newUserBio.setCountry(bioDTO.getCountry());
-  // newUserBio.setAddress(bioDTO.getAddress());
-  // newUserBio.setDescription(bioDTO.getDescription());
-  // newUserBio.setUser(user);
-  // return bioRepository.save(newUserBio);
-  // }catch (Exception e){
-  // throw new CustomException("Error trying to update '"+user.getUsername()+"'",
-  // HttpStatus.BAD_REQUEST);
-  // }
-  // }
 
 }

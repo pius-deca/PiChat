@@ -3,8 +3,10 @@ package com.github.pius.pichats.service.implementation;
 import com.github.pius.pichats.dto.PostDTO;
 import com.github.pius.pichats.dto.PostResponseDTO;
 import com.github.pius.pichats.exceptions.CustomException;
+import com.github.pius.pichats.model.Notification;
 import com.github.pius.pichats.model.Post;
 import com.github.pius.pichats.model.User;
+import com.github.pius.pichats.repository.NotificationRepository;
 import com.github.pius.pichats.repository.PostRepository;
 import com.github.pius.pichats.security.JwtProvider;
 import com.github.pius.pichats.service.PostService;
@@ -28,16 +30,19 @@ import java.util.Map;
 public class PostServiceImpl implements PostService {
   private final JwtProvider jwtProvider;
   private final PostRepository postRepository;
+  private final NotificationRepository notificationRepository;
   private final CloudService cloudService;
   private List<String> listOfPosts = new ArrayList<>();
   private final UserService userService;
   private final EntityPageIntoDtoPage entityPageIntoDtoPage;
 
   @Autowired
-  public PostServiceImpl(JwtProvider jwtProvider, PostRepository postRepository, CloudService cloudService,
-      UserService userService, EntityPageIntoDtoPage entityPageIntoDtoPage) {
+  public PostServiceImpl(JwtProvider jwtProvider, PostRepository postRepository,
+      NotificationRepository notificationRepository, CloudService cloudService, UserService userService,
+      EntityPageIntoDtoPage entityPageIntoDtoPage) {
     this.jwtProvider = jwtProvider;
     this.postRepository = postRepository;
+    this.notificationRepository = notificationRepository;
     this.cloudService = cloudService;
     this.userService = userService;
     this.entityPageIntoDtoPage = entityPageIntoDtoPage;
@@ -56,18 +61,22 @@ public class PostServiceImpl implements PostService {
 
   // a logged in user makes a post
   @Override
-  public Object post(PostDTO post, MultipartFile file, HttpServletRequest request) {
+  public Object post(PostDTO caption, MultipartFile file, HttpServletRequest request) {
     try {
-      // authServiceImpl.isAccountActive(request);
       User user = jwtProvider.resolveUser(request);
       Post newPost = new Post();
-      newPost.setCaption(post.getCaption());
+      newPost.setCaption(caption.getCaption());
       // upload post if username exists
       Map uploaded = cloudService.upload(file);
       newPost.setPost(cloudService.getFileName());
       newPost.setUser(user);
       newPost.setUrl(uploaded.get("secure_url").toString());
       postRepository.save(newPost);
+      // notify user once a post is created
+      Notification notify = new Notification();
+      notify.setActor(user.getUsername());
+      notify.setMessage("You just created a post");
+      notificationRepository.save(notify);
       return uploaded;
     } catch (Exception ex) {
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
@@ -78,13 +87,8 @@ public class PostServiceImpl implements PostService {
   @Override
   public Post findPost(String post, HttpServletRequest request) {
     try {
-      // authServiceImpl.isAccountActive(request);
-      User user = jwtProvider.resolveUser(request);
-      Post postFound = this.getPost(post);
-      if (postFound.getUser().equals(user)) {
-        return postFound;
-      }
-      throw new CustomException(user.getUsername() + " does not have post " + post, HttpStatus.NOT_FOUND);
+      jwtProvider.resolveUser(request);
+      return this.getPost(post);
     } catch (Exception ex) {
       throw new CustomException(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
@@ -94,7 +98,6 @@ public class PostServiceImpl implements PostService {
   @Override
   public PageResultConverter findAllPostsByUser(int page, int limit, String username, HttpServletRequest request) {
     try {
-      // authServiceImpl.isAccountActive(request);
       User user = userService.searchByUsername(username, request);
 
       if (page > 0)
@@ -111,6 +114,8 @@ public class PostServiceImpl implements PostService {
         res.setCaption(res.getCaption());
         res.setPost(res.getPost());
         res.setUrl(res.getUrl());
+        res.setCreatedAt(res.getCreatedAt());
+        res.setUpdatedAt(res.getUpdatedAt());
         res.setUser(res.getUser());
       });
 
@@ -140,6 +145,10 @@ public class PostServiceImpl implements PostService {
         res.setCaption(res.getCaption());
         res.setPost(res.getPost());
         res.setUrl(res.getUrl());
+        res.setCreatedAt(res.getCreatedAt());
+        res.setUpdatedAt(res.getUpdatedAt());
+        res.setNumOfLikes(res.getLikes().size());
+        res.setNumOfComments(res.getComments().size());
         res.setUser(res.getUser());
       });
 
@@ -152,7 +161,12 @@ public class PostServiceImpl implements PostService {
   // find a post of the logged in user and delete
   @Override
   public void delete(String post, HttpServletRequest request) throws Exception {
-    // authServiceImpl.isAccountActive(request);
+    User user = jwtProvider.resolveUser(request);
+    // notify user once a post is deleted
+    Notification notify = new Notification();
+    notify.setActor(user.getUsername());
+    notify.setMessage("You just deleted a post");
+    notificationRepository.save(notify);
     cloudService.deleteFile(post);
     postRepository.delete(this.findPost(post, request));
   }
@@ -160,7 +174,7 @@ public class PostServiceImpl implements PostService {
   // find a post of the logged in user mark put in a list
   @Override
   public String selectPostToDelete(String post, HttpServletRequest request) {
-    // authServiceImpl.isAccountActive(request);
+
     Post postFound = this.findPost(post, request);
     if (!listOfPosts.contains(postFound.getPost())) {
       listOfPosts.add(postFound.getPost());
@@ -173,7 +187,7 @@ public class PostServiceImpl implements PostService {
   // clear the list of posts if not empty
   @Override
   public String clearBatchDelete(HttpServletRequest request) {
-    // authServiceImpl.isAccountActive(request);
+
     if (!listOfPosts.isEmpty()) {
       listOfPosts.clear();
       return "Post(s) marked for delete have been canceled";
@@ -184,7 +198,7 @@ public class PostServiceImpl implements PostService {
   // delete the list posts of a logged in user
   @Override
   public String batchDelete(HttpServletRequest request) throws Exception {
-    // authServiceImpl.isAccountActive(request);
+
     if (!listOfPosts.isEmpty()) {
       for (String post : listOfPosts) {
         delete(post, request);
@@ -198,7 +212,6 @@ public class PostServiceImpl implements PostService {
   @Override
   public int countPostsOfUser(String username, HttpServletRequest request) {
     try {
-      // authServiceImpl.isAccountActive(request);
       User user = userService.searchByUsername(username, request);
       return postRepository.countPostsByUser(user);
     } catch (Exception ex) {

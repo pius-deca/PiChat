@@ -36,7 +36,7 @@ public class CommentController {
   }
 
   @GetMapping("/post/{postId}/comments")
-  public ResponseEntity<ApiResponse<PageResultConverter>> AllCommentsForPost(@PathVariable(name = "postId") String post,
+  public ResponseEntity<ApiResponse<PageResultConverter>> allCommentsForPost(@PathVariable(name = "postId") String post,
       @RequestParam(value = "page", defaultValue = "0") int page,
       @RequestParam(value = "limit", defaultValue = "10") int limit, HttpServletRequest request) {
     PageResultConverter comments = commentService.getAllCommentsForAPost(page, limit, post, request);

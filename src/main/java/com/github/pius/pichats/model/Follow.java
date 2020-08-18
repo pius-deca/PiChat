@@ -12,9 +12,13 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "follows")
-public class Follow extends GeneralBaseEntity{
+public class Follow extends GeneralBaseEntity {
 
   private String following;
+
+  private String profilePic;
+
+  private String followingBack = "false";
 
   @Column(columnDefinition = "boolean default false", nullable = false)
   private boolean accepted;

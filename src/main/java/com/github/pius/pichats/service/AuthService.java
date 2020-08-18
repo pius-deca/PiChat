@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface AuthService {
   AuthResponseDTO register(SignupRequestDTO user) throws Exception;
+
   String activate(String code, HttpServletRequest request);
+
   AuthResponseDTO login(LoginRequestDTO user);
 }

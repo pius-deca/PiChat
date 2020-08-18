@@ -1,7 +1,6 @@
 package com.github.pius.pichats.models;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.validation.Validation;
 import javax.validation.ValidatorFactory;
@@ -48,22 +47,20 @@ public class LikeTest {
   @DisplayName("like a post")
   void LikeAPost() {
     like.setId(3L);
-    like.setLikes(true);
     like.setPost(post);
     like.setUser(user2);
 
-    assertEquals(like.getId(), 3L);
-    assertTrue(like.isLikes());
-    assertEquals(like.getPost().getPost(), "new post.jpg");
-    assertEquals(like.getPost().getCaption(), "caption");
-    assertEquals(like.getPost().getUser().getFirstName(), "firstname");
-    assertEquals(like.getPost().getUser().getLastName(), "lastname");
-    assertEquals(like.getPost().getUser().getEmail(), "user@mail.com");
-    assertEquals(like.getPost().getUser().getUsername(), "username");
-    assertEquals(like.getUser().getFirstName(), "firstname2");
-    assertEquals(like.getUser().getLastName(), "lastname2");
-    assertEquals(like.getUser().getEmail(), "user2@mail.com");
-    assertEquals(like.getUser().getUsername(), "username2");
+    assertEquals(3L, like.getId());
+    assertEquals("new post.jpg", like.getPost().getPost());
+    assertEquals("caption", like.getPost().getCaption());
+    assertEquals("firstname", like.getPost().getUser().getFirstName());
+    assertEquals("lastname", like.getPost().getUser().getLastName());
+    assertEquals("user@mail.com", like.getPost().getUser().getEmail());
+    assertEquals("username", like.getPost().getUser().getUsername());
+    assertEquals("firstname2", like.getUser().getFirstName());
+    assertEquals("lastname2", like.getUser().getLastName());
+    assertEquals("user2@mail.com", like.getUser().getEmail());
+    assertEquals("username2", like.getUser().getUsername());
   }
 
 }

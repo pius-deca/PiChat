@@ -13,10 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "likes")
-public class Like extends GeneralBaseEntity{
-
-  @Column(columnDefinition = "boolean default false", nullable = false)
-  private boolean likes;
+public class Like extends GeneralBaseEntity {
 
   @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")

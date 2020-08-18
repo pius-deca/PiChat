@@ -10,6 +10,9 @@ import com.github.pius.pichats.dto.UpdateResponseDTO;
 import com.github.pius.pichats.model.User;
 
 public interface UserService {
+
+  boolean isActive(HttpServletRequest request);
+
   User searchByUsername(String username, HttpServletRequest request);
 
   List<User> searchUsernameByString(String username, HttpServletRequest request);

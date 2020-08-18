@@ -1,7 +1,10 @@
 package com.github.pius.pichats.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
@@ -40,4 +43,7 @@ public class User extends GeneralBaseEntity {
 
   @Column(name = "is_active", nullable = false)
   private boolean active = false;
+
+  @OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "user", orphanRemoval = true)
+  private ProfilePic profilePic;
 }
