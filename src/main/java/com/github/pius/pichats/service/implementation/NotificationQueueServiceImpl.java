@@ -22,11 +22,11 @@ public class NotificationQueueServiceImpl {
         // tdod
     }
 
-    public synchronized void sendNotification(String message) {
+    public synchronized void addToQueue(String message) {
         // todo
     }
 
-    public synchronized void recieveNotification() throws Exception {
+    public synchronized String receiveTromQueue() throws Exception {
         // todo
         BrokerService broker = BrokerFactory.createBroker(new URI("broker:(tcp://localhost:61616)"));
         broker.start();
@@ -48,8 +48,9 @@ public class NotificationQueueServiceImpl {
             connection.start();
             TextMessage textMsg = (TextMessage) consumer.receive();
             System.out.println(textMsg);
-            System.out.println("Received: " + textMsg.getText());
+            String returnMsg = "Received: " + textMsg.getText();
             session.close();
+            return returnMsg;
         } finally {
             if (connection != null) {
                 connection.close();

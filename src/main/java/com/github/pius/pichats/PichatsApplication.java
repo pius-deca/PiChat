@@ -24,22 +24,21 @@ public class PichatsApplication {
   public static void main(String[] args) {
     SpringApplication.run(PichatsApplication.class, args);
 
-    // try {
-    // JobDetail job =
-    // JobBuilder.newJob().ofType(Task.class).storeDurably().withIdentity("taskJob")
-    // .withDescription("Invoke task Job service...").build();
+    try {
+      JobDetail job = JobBuilder.newJob().ofType(Task.class).storeDurably().withIdentity("task11")
+          .withDescription("Invoke task Job service...").build();
 
-    // Trigger trigger = TriggerBuilder.newTrigger()
-    // .withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(30).repeatForever()).build();
+      Trigger trigger = TriggerBuilder.newTrigger()
+          .withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(180000).repeatForever()).build();
 
-    // // schedule the job
-    // SchedulerFactory schFactory = new StdSchedulerFactory();
-    // Scheduler sch = schFactory.getScheduler();
-    // sch.start();
-    // sch.scheduleJob(job, trigger);
-    // } catch (SchedulerException e) {
-    // e.printStackTrace();
-    // }
+      // schedule the job
+      SchedulerFactory schFactory = new StdSchedulerFactory();
+      Scheduler sch = schFactory.getScheduler();
+      sch.start();
+      sch.scheduleJob(job, trigger);
+    } catch (SchedulerException e) {
+      e.printStackTrace();
+    }
   }
 
   @PostConstruct
